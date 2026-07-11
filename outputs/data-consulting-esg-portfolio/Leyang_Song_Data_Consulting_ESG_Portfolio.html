@@ -1,0 +1,745 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leyang Song Data Consulting ESG Portfolio</title>
+  
+<style>
+@page { size: 1600px 900px; margin: 0; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #f7f4ec;
+  color: #171717;
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Aptos", Arial, sans-serif;
+}
+.page {
+  width: 1600px;
+  height: 900px;
+  position: relative;
+  overflow: hidden;
+  padding: 54px 76px 48px;
+  page-break-after: always;
+  background:
+    linear-gradient(90deg, rgba(255,230,0,.16) 0 10px, transparent 10px),
+    radial-gradient(circle at 92% 6%, rgba(14,97,88,.12), transparent 26%),
+    #f7f4ec;
+}
+.page:nth-child(2n) {
+  background:
+    linear-gradient(90deg, rgba(14,97,88,.12) 0 10px, transparent 10px),
+    radial-gradient(circle at 88% 12%, rgba(255,230,0,.18), transparent 24%),
+    #faf7ef;
+}
+.cover {
+  background:
+    linear-gradient(110deg, #171717 0 48%, rgba(23,23,23,.96) 48%, rgba(23,23,23,.88) 54%, transparent 54%),
+    #f7f4ec;
+  color: #f7f4ec;
+}
+.accent-mark {
+  width: 112px;
+  height: 16px;
+  background: #ffe600;
+  transform: skewX(-24deg);
+  margin-bottom: 42px;
+}
+.kicker {
+  margin: 0 0 14px;
+  color: #5d6f62;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.cover .kicker { color: #ffe600; }
+h1, h2, h3, p { margin: 0; }
+h1 {
+  font-size: 64px;
+  line-height: 1.04;
+  letter-spacing: 0;
+  max-width: 650px;
+}
+h2 {
+  font-size: 40px;
+  line-height: 1.12;
+  max-width: 1180px;
+  letter-spacing: 0;
+}
+h3 {
+  font-size: 23px;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+p, li {
+  font-size: 18px;
+  line-height: 1.45;
+  color: #373737;
+}
+.cover p { color: #e9e3d6; }
+.lead { font-size: 21px; line-height: 1.42; margin-top: 24px; max-width: 690px; }
+.footer {
+  position: absolute;
+  left: 76px;
+  right: 76px;
+  bottom: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #807a70;
+  font-size: 13px;
+  border-top: 1px solid rgba(23,23,23,.18);
+  padding-top: 12px;
+}
+.cover .footer { color: #c8c0b3; border-color: rgba(255,255,255,.2); }
+img { width: 100%; height: 100%; object-fit: cover; display: block; }
+figure {
+  margin: 0;
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(23,23,23,.08);
+  overflow: hidden;
+}
+figcaption {
+  position: absolute;
+  left: 18px;
+  bottom: 14px;
+  right: 18px;
+  color: #f7f4ec;
+  background: rgba(23,23,23,.76);
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.cover-grid { display: grid; grid-template-columns: 50% 50%; gap: 44px; height: 100%; }
+.cover-copy { padding-top: 24px; }
+.cover-pills { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 44px; max-width: 650px; }
+.cover-pills span, .chips span, .skill-strip span {
+  border: 1px solid rgba(23,23,23,.18);
+  padding: 8px 13px;
+  background: rgba(255,255,255,.72);
+  font-size: 15px;
+  font-weight: 700;
+}
+.cover-pills span { color: #171717; background: #ffe600; border-color: transparent; }
+.profile-panel {
+  align-self: center;
+  min-height: 700px;
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  grid-template-rows: auto 160px;
+  gap: 22px;
+  padding: 34px;
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(23,23,23,.1);
+  color: #171717;
+}
+.portrait-frame {
+  height: 395px;
+  background: #fff;
+  overflow: hidden;
+  border: 1px solid rgba(23,23,23,.12);
+}
+.portrait-img { object-position: center 22%; }
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 8px solid #ffe600;
+  padding-left: 30px;
+}
+.profile-name {
+  color: #171717 !important;
+  font-size: 41px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 18px;
+}
+.profile-name span {
+  font-size: 25px;
+  color: #6b6258;
+  font-weight: 700;
+}
+.profile-school {
+  color: #2d2d2d !important;
+  font-size: 21px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+.contact-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+.contact-list span {
+  display: block;
+  color: #171717;
+  font-size: 18px;
+  font-weight: 750;
+  padding: 12px 14px;
+  background: #f7f4ec;
+  border: 1px solid rgba(23,23,23,.08);
+}
+.profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.profile-tags span {
+  color: #171717;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 8px 10px;
+  background: rgba(255,230,0,.72);
+}
+.cover-preview-strip {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 1.2fr .85fr .85fr;
+  gap: 14px;
+  overflow: hidden;
+}
+.cover-preview-strip img {
+  background: #fff;
+  border: 1px solid rgba(23,23,23,.08);
+  object-fit: cover;
+}
+.title-row { margin-bottom: 48px; }
+.fit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  min-height: 500px;
+}
+.fit-card {
+  padding: 36px;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(23,23,23,.12);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.fit-card.dark { background: #171717; color: #f7f4ec; }
+.fit-card.dark p, .fit-card.dark li { color: #e9e3d6; }
+.fit-card.green { background: #264e42; color: #f7f4ec; }
+.fit-card.green p { color: #e8efe9; }
+.metric {
+  border-top: 1px solid rgba(23,23,23,.18);
+  padding-top: 14px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: baseline;
+}
+.dark .metric, .green .metric { border-color: rgba(255,255,255,.25); }
+.metric b { font-size: 42px; line-height: 1; color: #ffe600; }
+.metric span { font-size: 16px; line-height: 1.3; color: inherit; }
+.skill-strip { position: absolute; left: 76px; right: 76px; bottom: 82px; display: flex; gap: 10px; flex-wrap: wrap; }
+.project-head { margin-bottom: 18px; }
+.project-head.compact { margin-bottom: 22px; }
+.transition-note {
+  margin-top: 14px;
+  max-width: 1120px;
+  padding: 11px 16px 12px;
+  border-left: 7px solid #ffe600;
+  background: rgba(255,255,255,.78);
+  color: #423d36;
+  font-size: 15px;
+  line-height: 1.34;
+  font-weight: 650;
+}
+.chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.two-col {
+  display: grid;
+  grid-template-columns: .94fr 1.06fr;
+  gap: 28px;
+  height: 545px;
+}
+.visual-heavy { grid-template-columns: .82fr 1.18fr; }
+.text-panel, .result-panel, .translation-card, .decision-panel, .lab-copy, .output-copy, .glove-copy, .communication-panel {
+  background: rgba(255,255,255,.76);
+  border: 1px solid rgba(23,23,23,.1);
+  padding: 26px;
+}
+.text-panel p + h3 { margin-top: 18px; }
+.panel-note {
+  margin-top: 18px;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(23,23,23,.16);
+  font-weight: 650;
+}
+.mini-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 28px 0; }
+.mini-metrics .metric { display: block; padding-top: 12px; }
+.mini-metrics .metric b { display: block; font-size: 36px; }
+.image-stage {
+  overflow: hidden;
+  background: #090909;
+  border: 1px solid rgba(23,23,23,.18);
+}
+.dark-stage img { object-fit: contain; padding: 18px; }
+.tri-layout {
+  display: grid;
+  grid-template-columns: 52% 25% 23%;
+  gap: 22px;
+  height: 590px;
+}
+.hero-figure img { object-fit: cover; object-position: 54% 48%; }
+.claim-stack { display: grid; gap: 18px; }
+.claim-stack div {
+  background: #171717;
+  color: #f7f4ec;
+  padding: 20px;
+  min-height: 170px;
+}
+.claim-stack b { display: block; font-size: 25px; margin-bottom: 10px; color: #ffe600; }
+.claim-stack span { font-size: 18px; line-height: 1.45; color: #e9e3d6; }
+.small-figures { display: grid; gap: 18px; }
+.small-figures img { background: #111; object-fit: contain; padding: 12px; }
+.question-grid {
+  display: grid;
+  grid-template-columns: 36% 64%;
+  gap: 26px;
+  height: 555px;
+}
+.question-copy {
+  padding: 34px;
+  background: #171717;
+  color: #f7f4ec;
+}
+.question-copy p { color: #e9e3d6; }
+.insight-list { display: grid; gap: 14px; margin-top: 32px; }
+.insight-list span {
+  display: block;
+  padding: 15px 18px;
+  background: #ffe600;
+  color: #171717;
+  font-weight: 800;
+  font-size: 19px;
+}
+.chart-wall {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.chart-wall img {
+  object-fit: contain;
+  background: #111;
+  padding: 10px;
+  border: 1px solid rgba(23,23,23,.1);
+}
+.media-stack { display: grid; grid-template-rows: 1fr .75fr; gap: 18px; }
+.render-card {
+  height: 245px;
+  object-fit: cover;
+  object-position: 44% 42%;
+  margin: 22px 0;
+  border: 1px solid rgba(23,23,23,.12);
+}
+.role-note {
+  border-left: 8px solid #ffe600;
+  padding: 15px 18px;
+  background: rgba(255,230,0,.16);
+  font-size: 19px;
+  line-height: 1.45;
+  color: #2d2d2d;
+}
+.evidence-layout {
+  display: grid;
+  grid-template-columns: 1.25fr .82fr;
+  grid-template-rows: 1fr;
+  gap: 22px;
+  height: 555px;
+}
+.focused-evidence .wide { min-width: 0; }
+.evidence-layout .wide img, .evidence-layout figure img {
+  object-fit: contain;
+  object-position: center;
+  background: #fff;
+}
+.evidence-copy { padding: 32px; background: #264e42; color: #f7f4ec; }
+.evidence-copy p { color: #e8efe9; }
+.evidence-copy .metric { border-color: rgba(255,255,255,.25); }
+.persona-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr .9fr;
+  grid-template-rows: 1fr .86fr;
+  gap: 18px;
+  height: 590px;
+}
+.persona-grid figure img {
+  object-fit: contain;
+  background: #fff;
+}
+.bench-card { grid-row: span 2; }
+.translation-card { grid-column: span 2; display: flex; flex-direction: column; justify-content: center; }
+.blueprint-layout {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  grid-template-rows: 1fr 96px;
+  gap: 18px;
+  height: 570px;
+}
+.blueprint-main { grid-row: span 2; }
+.right-rail { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.impact-bar {
+  background: #171717;
+  color: #f7f4ec;
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 18px;
+  align-items: center;
+}
+.impact-bar span { color: #ffe600; font-weight: 900; font-size: 18px; }
+.impact-bar b { font-size: 18px; line-height: 1.28; }
+.lab-layout {
+  display: grid;
+  grid-template-columns: 42% 28% 30%;
+  gap: 20px;
+  height: 555px;
+}
+.lab-hero { grid-row: span 1; }
+.lab-copy ul, .communication-panel ul, .fit-card ul { padding-left: 22px; margin: 16px 0 0; }
+.experiment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr .82fr;
+  gap: 18px;
+  height: 570px;
+}
+.blueprint-layout figure img,
+.lab-layout figure img,
+.material-output figure img {
+  object-fit: contain;
+  background: #fff;
+}
+.experiment-grid figure img {
+  object-fit: cover;
+  object-position: center;
+  background: #fff;
+}
+.decision-panel { background: #171717; color: #f7f4ec; }
+.decision-panel p { color: #e9e3d6; }
+.decision-panel .metric { border-color: rgba(255,255,255,.24); margin-top: 20px; }
+.material-output {
+  display: grid;
+  grid-template-columns: 1fr 1fr .82fr;
+  gap: 20px;
+  height: 570px;
+}
+.glove-layout {
+  display: grid;
+  grid-template-columns: 63% 37%;
+  gap: 24px;
+  height: 555px;
+}
+.glove-hero img { object-fit: contain; object-position: top center; background: #fff; }
+.glove-copy { display: flex; flex-direction: column; justify-content: center; }
+.glove-second {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: 24px;
+  height: 570px;
+}
+.glove-evidence-grid {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 18px;
+  min-height: 0;
+}
+.glove-evidence-grid figure img {
+  object-fit: cover;
+  object-position: center;
+}
+.communication-panel {
+  background: #171717;
+  color: #f7f4ec;
+}
+.communication-panel li, .communication-panel p { color: #e9e3d6; }
+.communication-panel li { margin-bottom: 16px; }
+.communication-panel b { color: #ffe600; }
+.communication-panel .role-note {
+  background: #ffe600;
+  border-left-color: #ffe600;
+  color: #171717;
+}
+.glove-mid img { object-position: center; }
+</style>
+
+</head>
+<body>
+<section class='page cover'>
+        <div class="cover-grid">
+          <div class="cover-copy">
+            <div class="accent-mark"></div>
+            <p class="kicker">DATA / CONSULTING / ESG</p>
+            <h1>Data, Consulting &amp; ESG Portfolio</h1>
+            <p class="lead">A concise portfolio of research-led product and service projects, showing how user signals, market evidence, and sustainability questions can be shaped into clear decisions.</p>
+            <div class="cover-pills">
+              <span>Market Research</span><span>Survey Visualization</span><span>Benchmarking</span><span>Persona</span><span>Service Blueprint</span><span>Experiment Log</span><span>ESG Materials</span>
+            </div>
+          </div>
+          <div class="profile-panel">
+            <div class="portrait-frame"><img class="portrait-img" src="final_assets/profile_eric_song.jpg" alt="Leyang Song Eric portrait"></div>
+            <div class="profile-info">
+              <p class="profile-name">Leyang Song <span>Eric</span></p>
+              <p class="profile-school">Xi'an Jiaotong University &middot; Industrial Design</p>
+              <div class="profile-tags">
+                <span>Research</span><span>Data Visualization</span><span>Service Design</span><span>ESG Narrative</span>
+              </div>
+            </div>
+            <div class="cover-preview-strip">
+              <img class="" src="final_assets/hotel_blueprint.jpg" alt="hotel_blueprint"> <img class="" src="final_assets/materials_product.jpg" alt="materials_product"> <img class="" src="final_assets/vacuum_hero.jpg" alt="vacuum_hero">
+            </div>
+          </div>
+        </div>
+        <div class='footer'><span>Cover</span><span>01</span></div></section><section class='page '>
+        <div class="title-row">
+          <p class="kicker">ROLE FIT</p>
+          <h2>Across these projects, my work is strongest where evidence needs to become a usable recommendation.</h2>
+        </div>
+        <div class="fit-grid">
+          <div class="fit-card dark">
+            <h3>Data-to-Insight</h3>
+            <p>Survey, interview, observation, and competitor signals are organized into evidence that can be compared, prioritized, and presented.</p>
+            <div class='metric '><b>57</b><span>manual coffee grinder survey responses</span></div>
+            <div class='metric '><b>72%</b><span>hotel lock pain point: unclear card-swipe position</span></div>
+          </div>
+          <div class="fit-card">
+            <h3>Consulting Storyline</h3>
+            <p>Personas, journey maps, benchmarking, and service blueprints connect user needs with operational and product decisions.</p>
+            <ul>
+              <li>Dual-user lens: guests and housekeeping staff</li>
+              <li>Multi-stakeholder logic: front desk, cleaning, IT, hardware, maintenance</li>
+              <li>From observation to a system-level proposal</li>
+            </ul>
+          </div>
+          <div class="fit-card green">
+            <h3>ESG & Impact</h3>
+            <p>Sustainable materials, durable product systems, and eldercare technology are framed through social value and implementation feasibility.</p>
+            <div class='metric '><b>92%</b><span>referenced natural degradation rate for PLA concept material</span></div>
+            <div class='metric '><b>30-40%</b><span>lower price range versus rehabilitation robots</span></div>
+          </div>
+        </div>
+        <div class="skill-strip">
+          <span>Market Research</span><span>Survey Design</span><span>Data Visualization</span><span>Benchmarking</span><span>Persona</span><span>Service Blueprint</span><span>Experiment Log</span><span>ESG Narrative</span>
+        </div>
+        <div class='footer'><span>Role Fit</span><span>02</span></div></section><section class='page '>
+        <div class="project-head">
+          <p class="kicker">PROJECT 01 / CAR CLEANING PRODUCT</p>
+          <h2>Car Vacuum Cleaner: turning market positioning into two clear product concepts.</h2>
+          <div class='chips'><span>User &amp; market research</span><span>Competitive analysis</span><span>Modeling and rendering</span></div>
+          <div class='transition-note'>This case starts with positioning: user needs and competitor signals were translated into concepts that could be evaluated, priced, and communicated.</div>
+        </div>
+        <div class="two-col visual-heavy">
+          <div class="text-panel">
+            <h3>Problem framing</h3>
+            <p>The in-car cleaning scenario was broken into four demand areas: performance, compact-space use, EV compatibility, and sustainable materials. That logic shaped two product lines: TurboForce X1 for performance and EcoPulse S1 for responsibility.</p>
+            <div class="mini-metrics">
+              <div class='metric '><b>RMB 998</b><span>TurboForce X1 premium concept price</span></div>
+              <div class='metric '><b>RMB 668</b><span>EcoPulse S1 green-consumer concept price</span></div>
+              <div class='metric '><b>25KPa</b><span>high-suction concept benchmark</span></div>
+            </div>
+            <p class="panel-note">The key skill here is translating research and competitor cues into segmentation, feature priorities, and a visual story a decision-maker can quickly understand.</p>
+          </div>
+          <div class="image-stage dark-stage"><img class="" src="final_assets/vacuum_hero.jpg" alt="vacuum_hero"></div>
+        </div>
+        <div class='footer'><span>Project 01</span><span>03</span></div></section><section class='page '>
+        <div class="project-head compact">
+          <p class="kicker">OUTPUT / MODELING & RENDERING</p>
+          <h2>Rendering and structure visuals made the concept reviewable, not just imaginable.</h2>
+        </div>
+        <div class="tri-layout">
+          <figure class="hero-figure"><img class="" src="final_assets/vacuum_cutaway.jpg" alt="vacuum_cutaway"><figcaption>Transparent structural rendering used to explain airflow, separation, and filtration logic.</figcaption></figure>
+          <div class="claim-stack">
+            <div><b>Competitive cues</b><span>References from Dyson, Tesla, and new-energy vehicle use cases were converted into motor, material, interface, and safety decisions.</span></div>
+            <div><b>Clear differentiation</b><span>The two-line concept covered both performance-driven users and sustainability-oriented users, making the market story easier to defend.</span></div>
+            <div><b>Deliverables</b><span>Modeling, exterior rendering, and internal-structure visuals became the core evidence assets for the final presentation.</span></div>
+          </div>
+          <div class="small-figures">
+            <img class="" src="final_assets/vacuum_lineup.jpg" alt="vacuum_lineup">
+            <img class="" src="final_assets/vacuum_internal.jpg" alt="vacuum_internal">
+          </div>
+        </div>
+        <div class='footer'><span>Project 01</span><span>04</span></div></section><section class='page '>
+        <div class="project-head">
+          <p class="kicker">PROJECT 02 / MANUAL COFFEE GRINDER</p>
+          <h2>57 survey responses focused the grinder redesign on portability, effort, and grind quality.</h2>
+          <div class='chips'><span>Survey launch</span><span>User needs synthesis</span><span>Data visualization</span></div>
+          <div class='transition-note'>This case moves closer to user research: surveys, observation, and interviews turned scattered feedback into a clear product direction.</div>
+        </div>
+        <div class="question-grid">
+          <div class="question-copy">
+            <h3>Research takeaways</h3>
+            <p>The respondent group was mainly 18-25-year-old students and lifestyle-oriented coffee users. They valued grind control, aroma retention, ritual, and portability, while also reporting cleaning difficulty, physical effort, unclear adjustment, and inconsistent grinding.</p>
+            <div class="insight-list">
+              <span>Portability / carry the setup outdoors</span>
+              <span>Efficiency / reduce hand-cranking fatigue</span>
+              <span>Grind Quality / improve consistency</span>
+              <span>Ritual / preserve the brewing experience</span>
+            </div>
+          </div>
+          <div class="chart-wall">
+            <img class="" src="final_assets/grinder_q1.jpg" alt="grinder_q1"><img class="" src="final_assets/grinder_q2.jpg" alt="grinder_q2"><img class="" src="final_assets/grinder_q3.jpg" alt="grinder_q3"><img class="" src="final_assets/grinder_q4.jpg" alt="grinder_q4">
+          </div>
+        </div>
+        <div class='footer'><span>Project 02</span><span>05</span></div></section><section class='page '>
+        <div class="project-head compact">
+          <p class="kicker">INSIGHT TO PRODUCT</p>
+          <h2>Visualized needs became the decision basis for an all-in-one grinder cup.</h2>
+        </div>
+        <div class="two-col">
+          <div class="media-stack">
+            <figure><img class="" src="final_assets/grinder_observe.jpg" alt="grinder_observe"><figcaption>User observation: hand grinding required effort, beans spilled easily, and adjustment took time.</figcaption></figure>
+            <figure><img class="" src="final_assets/grinder_bench.jpg" alt="grinder_bench"><figcaption>Direct and indirect benchmarking across price, portability, aroma retention, cleaning, and sustainability.</figcaption></figure>
+          </div>
+          <div class="result-panel">
+            <h3>Output and impact</h3>
+            <p>Survey and interview findings were synthesized into user profiles, pain-point priorities, and feature directions. The final concept connected bean storage, controlled release, a foldable handle, cup integration, and recyclable materials into one coherent product position.</p>
+            <img class="render-card" src="final_assets/grinder_render.jpg" alt="grinder_render">
+            <div class="role-note">This project reflects my ability to translate unstructured user feedback into an actionable design brief, with clear priorities and presentable evidence.</div>
+          </div>
+        </div>
+        <div class='footer'><span>Project 02</span><span>06</span></div></section><section class='page '>
+        <div class="project-head">
+          <p class="kicker">PROJECT 03 / HOTEL DOOR HANDLE SYSTEM</p>
+          <h2>Hotel Door Handle System: using data and observation to define shared pain points.</h2>
+          <div class='chips'><span>Benchmarking</span><span>Persona</span><span>Service Blueprint</span></div>
+          <div class='transition-note'>This case expands from a single object to a service touchpoint: the door handle becomes a link between guests, housekeeping staff, and hotel operations.</div>
+        </div>
+        <div class="evidence-layout focused-evidence">
+          <figure class="wide"><img class="" src="final_assets/hotel_questionnaire.jpg" alt="hotel_questionnaire"><figcaption>Survey evidence: unclear card-swipe position, demagnetization, no feedback, and unstable Bluetooth.</figcaption></figure>
+          <div class="evidence-copy">
+            <h3>From lock to service touchpoint</h3>
+            <p>The issue was framed through two user groups: luggage-carrying young travelers who need lower-friction entry, and housekeeping staff who need clearer room-status and task feedback.</p>
+            <div class="mini-metrics">
+              <div class='metric '><b>5.2%</b><span>budget hotel market CAGR, 2026-2030</span></div>
+              <div class='metric '><b>95%</b><span>hotel revenue generated by guest rooms</span></div>
+              <div class='metric '><b>65%</b><span>traditional lock pain point: card demagnetization</span></div>
+            </div>
+          </div>
+        </div>
+        <div class='footer'><span>Project 03</span><span>07</span></div></section><section class='page '>
+        <div class="project-head compact">
+          <p class="kicker">BENCHMARKING + PERSONA</p>
+          <h2>Benchmarking and personas turned design goals into comparable decision criteria.</h2>
+        </div>
+        <div class="persona-grid">
+          <figure><img class="" src="final_assets/hotel_persona_guest.jpg" alt="hotel_persona_guest"><figcaption>Persona 1: a young traveler carrying luggage and looking for faster room entry.</figcaption></figure>
+          <figure><img class="" src="final_assets/hotel_persona_staff.jpg" alt="hotel_persona_staff"><figcaption>Persona 2: a room attendant who needs efficient task and room-status confirmation.</figcaption></figure>
+          <figure class="bench-card"><img class="" src="final_assets/hotel_bench.jpg" alt="hotel_bench"><figcaption>Benchmarking dimensions: reliability, ergonomics, status visibility, and feedback.</figcaption></figure>
+          <div class="translation-card">
+            <h3>Method value</h3>
+            <p>The comparison moved beyond subjective impressions by breaking competing products into measurable criteria: status visibility, backup reliability, feedback strength, entry difficulty, and material durability.</p>
+            <p>The output reads like a consulting comparison: define the criteria, compare alternatives, and explain the recommended direction.</p>
+          </div>
+        </div>
+        <div class='footer'><span>Project 03</span><span>08</span></div></section><section class='page '>
+        <div class="project-head compact">
+          <p class="kicker">SERVICE BLUEPRINT</p>
+          <h2>The service blueprint tested the hardware concept inside hotel operations.</h2>
+        </div>
+        <div class="blueprint-layout">
+          <figure class="blueprint-main"><img class="" src="final_assets/hotel_blueprint.jpg" alt="hotel_blueprint"><figcaption>Overall blueprint: check-in, identity verification, room-status sync, and backend support.</figcaption></figure>
+          <div class="right-rail">
+            <figure><img class="" src="final_assets/hotel_cleaning.jpg" alt="hotel_cleaning"><figcaption>Cleaning-service path: room-status setting, task execution, and reset.</figcaption></figure>
+            <figure><img class="" src="final_assets/hotel_system.jpg" alt="hotel_system"><figcaption>System map: hardware, PMS, projection terminal, and service-response loop.</figcaption></figure>
+          </div>
+          <div class="impact-bar">
+            <span>Consulting output</span>
+            <b>The door-handle concept was translated into a multi-stakeholder operating flow, clarifying data and status handoffs across front desk, cleaning, IT, maintenance, and hardware partners.</b>
+          </div>
+        </div>
+        <div class='footer'><span>Project 03</span><span>09</span></div></section><section class='page '>
+        <div class="project-head">
+          <p class="kicker">PROJECT 04 / SUSTAINABLE MATERIALS</p>
+          <h2>Sustainable Materials Research: turning fruit waste and plant fibers into testable material hypotheses.</h2>
+          <div class='chips'><span>Experiment execution</span><span>Process documentation</span><span>Observation synthesis</span></div>
+          <div class='transition-note'>The focus then shifts to sustainable materials: this case highlights experimental documentation, failure analysis, and evidence-based iteration.</div>
+        </div>
+        <div class="lab-layout">
+          <figure class="lab-hero"><img class="" src="final_assets/materials_pretreat.jpg" alt="materials_pretreat"><figcaption>Ingredient pre-treatment: drying, grinding, and screening mangosteen rind powder.</figcaption></figure>
+          <figure><img class="" src="final_assets/materials_process.jpg" alt="materials_process"><figcaption>Visual record of the experiment process.</figcaption></figure>
+          <div class="lab-copy">
+            <h3>ESG perspective</h3>
+            <p>The project was approached through a waste-to-material lens, testing how mangosteen rind, gelatin, glycerin, vinegar, lemon juice, and plant fibers could become tactile, moldable, and narratable bio-composites.</p>
+            <ul>
+              <li>Clarify material origin and circular value</li>
+              <li>Use experiment records to support the sustainability story</li>
+              <li>Treat failed samples as evidence for optimization</li>
+            </ul>
+          </div>
+        </div>
+        <div class='footer'><span>Project 04</span><span>10</span></div></section><section class='page '>
+        <div class="project-head compact">
+          <p class="kicker">EXPERIMENT LOGIC</p>
+          <h2>The value of experiment logs is explaining why something failed and how the next round should improve.</h2>
+        </div>
+        <div class="experiment-grid">
+          <figure><img class="" src="final_assets/materials_exp3_sample.jpg" alt="materials_exp3_sample"><figcaption>Experiment III: vinegar was added and no visible mold appeared.</figcaption></figure>
+          <figure><img class="" src="final_assets/materials_fail_sample.jpg" alt="materials_fail_sample"><figcaption>Experiment IV: drying produced cracking and brittle failure.</figcaption></figure>
+          <figure><img class="" src="final_assets/materials_result_sample.jpg" alt="materials_result_sample"><figcaption>Experiment VII: more glycerin and lemon juice improved softness and smell.</figcaption></figure>
+          <div class="decision-panel">
+            <h3>How documentation drove iteration</h3>
+            <p>Ratios, process deviations, texture, smell, elasticity, cracking, and mold were tracked across trials. Those records made the next changes evidence-based instead of intuitive.</p>
+            <div class='metric '><b>7</b><span>mangosteen-rind experiment iterations</span></div>
+            <div class='metric '><b>5</b><span>pineapple-leaf experiment iterations</span></div>
+          </div>
+        </div>
+        <div class='footer'><span>Project 04</span><span>11</span></div></section><section class='page '>
+        <div class="project-head compact">
+          <p class="kicker">MATERIAL TO PRODUCT</p>
+          <h2>From material property sheet to product exhibition, the work became a complete ESG innovation story.</h2>
+        </div>
+        <div class="material-output">
+          <figure><img class="" src="final_assets/materials_sheet.jpg" alt="materials_sheet"><figcaption>Material Property Sheet: a consistent record of color, thickness, smell, texture, and performance.</figcaption></figure>
+          <figure><img class="" src="final_assets/materials_product.jpg" alt="materials_product"><figcaption>Product Exhibition: optimized materials translated into a stress-relief toy concept.</figcaption></figure>
+          <div class="output-copy">
+            <h3>Sustainable innovation language</h3>
+            <p>This project is best framed as waste valorization, experiment documentation, and early product-feasibility exploration. The point is not simply to show attractive samples, but to show how a sustainability hypothesis is tested, challenged, and refined.</p>
+            <div class="role-note">This experience demonstrates capabilities relevant to sustainable product research, supply-chain material innovation, and social-impact evaluation.</div>
+          </div>
+        </div>
+        <div class='footer'><span>Project 04</span><span>12</span></div></section><section class='page '>
+        <div class="project-head">
+          <p class="kicker">PROJECT 05 / ELDERCARE & HEALTH TECH</p>
+          <h2>Eldercare Healing Glove: using market opportunity, personas, and functional logic to support a commercialization poster.</h2>
+          <div class='chips'><span>Poster production</span><span>Market research support</span><span>Business opportunity framing</span></div>
+          <div class='transition-note'>The final case brings together market research, user empathy, and social-value communication in an eldercare health-tech narrative.</div>
+        </div>
+        <div class="glove-layout">
+          <figure class="glove-hero"><img class="" src="final_assets/glove_top.jpg" alt="glove_top"><figcaption>Poster upper section: market potential, initial sketches, and eldercare personas.</figcaption></figure>
+          <div class="glove-copy">
+            <h3>Market logic</h3>
+            <p>The glove was framed around smart eldercare and companionship. The poster argues the opportunity through institutional procurement, consumer acceptance, regional demand, and competitor gaps, instead of only presenting the product form.</p>
+            <div class="mini-metrics">
+              <div class='metric '><b>68%</b><span>B-end sales share: nursing homes and institutions</span></div>
+              <div class='metric '><b>46%</b><span>East China sales concentration</span></div>
+              <div class='metric '><b>70%</b><span>fewer operation steps versus comparable products</span></div>
+            </div>
+          </div>
+        </div>
+        <div class='footer'><span>Project 05</span><span>13</span></div></section><section class='page '>
+        <div class="project-head compact">
+          <p class="kicker">COMMUNICATION AS OUTPUT</p>
+          <h2>The poster's value is making eldercare technology feel investable, understandable, and implementable.</h2>
+        </div>
+        <div class="glove-second">
+          <div class="communication-panel">
+            <h3>Transferable capabilities</h3>
+            <ul>
+              <li><b>Market sizing:</b> use sales structure, regional demand, price bands, and subsidy signals to support opportunity judgment.</li>
+              <li><b>User empathy:</b> use elder personas to explain grip weakness, health monitoring, and emotional companionship needs.</li>
+              <li><b>Concept translation:</b> turn mechanical and health functions into a readable poster narrative.</li>
+              <li><b>Social impact:</b> connect the product value to independent living, reassurance, and emotional support.</li>
+            </ul>
+            <div class="role-note">This project shows social impact, business opportunity, and user insight brought together in one concise application-ready format.</div>
+          </div>
+          <div class="glove-evidence-grid">
+            <figure><img class="" src="final_assets/glove_sketches.jpg" alt="glove_sketches"><figcaption>Early sketches: assistive mechanism, wearable form, and interaction direction.</figcaption></figure>
+            <figure><img class="" src="final_assets/glove_ui.jpg" alt="glove_ui"><figcaption>Interface and technical-detail area: companionship feedback, monitoring, and product logic.</figcaption></figure>
+          </div>
+        </div>
+        <div class='footer'><span>Project 05</span><span>14</span></div></section>
+</body>
+</html>

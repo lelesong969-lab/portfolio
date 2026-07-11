@@ -1,0 +1,69 @@
+﻿# Local agent/tool state
+/.agents/
+/.codex/
+/.superpowers/
+/.playwright-cli/
+
+# Local-only project governance and internal planning
+/AGENTS.md
+/PRD.md
+/docs/superpowers/
+
+# Sensitive browser profiles
+**/chrome_profile/
+**/chrome-profile*/
+**/browser_profile/
+**/browser-profile*/
+
+# Dependency and build caches
+node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+.pnp.*
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.cache/
+.tmp/
+tmp/
+temp/
+dist/
+build/
+coverage/
+
+# Browser/test artifacts
+test-results/
+playwright-report/
+*.trace.zip
+
+# Render and QA scratch outputs
+/docx_render_check/
+/resume_render_*/
+outputs/**/qa/
+outputs/**/manifest.json
+
+# Generated document exports
+*.pdf
+*.docx
+*.pptx
+*.xlsx
+*.xls
+
+# Historical or non-web-project sources
+/outputs/manual-20260520-ey-portfolio/
+/build_consulting_resume.py
+/build_ey_resume_bilingual.py
+/fill_ps_questionnaire.py
+/Eric_Song_Data_Consulting_ESG_Portfolio.html
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*.tmp
+*.bak
+*.log
