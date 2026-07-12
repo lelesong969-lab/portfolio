@@ -1,0 +1,10 @@
+.next/
+node_modules/
+.vercel/
+.playwright-cli/
+output/
+docs/qa/
+playwright-report/
+test-results/
+AGENTS.md
+*.tsbuildinfo

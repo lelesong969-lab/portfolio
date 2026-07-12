@@ -1,0 +1,384 @@
+{
+  "version": 1,
+  "sourceRoot": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets",
+  "outputRoot": "portfolio-site/public/projects",
+  "assets": [
+    {
+      "output": "hotel/hero.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/04_hotel_blueprint/page16.png",
+      "sourceSha256": "f4f23bcd8c358f5b16eca6e89bf2c2e9bda4a3c3a4967d393bd154543b20308f",
+      "sha256": "b50f3c7e25124e581907714f9c77e4b886f5effc03f0f4dc49a46bdbf221900d",
+      "sourceSize": [
+        2480,
+        1395
+      ],
+      "crop": [
+        1120,
+        520,
+        2480,
+        1395
+      ],
+      "outputSize": [
+        1360,
+        875
+      ],
+      "bytes": 35448,
+      "purpose": "hero",
+      "maxCssWidth": 800,
+      "maxCssHeight": 570
+    },
+    {
+      "output": "hotel/system-map.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/04_hotel_blueprint/page21.png",
+      "sourceSha256": "77ca79743edbc5f7ae289c094b8c96cccddaf57a98d40505dc3d1f940e6cafa7",
+      "sha256": "06433517176db609b83d954633a52d85947faac9de00a8f93a5cc5d6e9507a1f",
+      "sourceSize": [
+        2480,
+        1395
+      ],
+      "crop": null,
+      "outputSize": [
+        1920,
+        1080
+      ],
+      "bytes": 131136,
+      "purpose": "lightbox",
+      "maxCssWidth": 1280,
+      "maxCssHeight": 720
+    },
+    {
+      "output": "hotel/service-blueprint.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/04_hotel_blueprint/page22.png",
+      "sourceSha256": "5025701321f0ee2825499e65a51c5127a0b4688b04114305c466b55847ee90ad",
+      "sha256": "3a7439ee3cb9d928b478a67f16f98712b57429dfd4e3dd3f28035aabddaf86e8",
+      "sourceSize": [
+        2480,
+        1395
+      ],
+      "crop": null,
+      "outputSize": [
+        1920,
+        1080
+      ],
+      "bytes": 123622,
+      "purpose": "lightbox",
+      "maxCssWidth": 1280,
+      "maxCssHeight": 720
+    },
+    {
+      "output": "hotel/usage-process.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/04_hotel_blueprint/page20.png",
+      "sourceSha256": "df62248591685aca3d03e86000b7cdb8cef13f129e61268b509a71e897782b8b",
+      "sha256": "405642ba36dc5e24241986a8fc6100829752d18aa77c109dbef63cb623d0b47c",
+      "sourceSize": [
+        2480,
+        1395
+      ],
+      "crop": null,
+      "outputSize": [
+        1600,
+        900
+      ],
+      "bytes": 73614,
+      "purpose": "evidence",
+      "maxCssWidth": 1000,
+      "maxCssHeight": 563
+    },
+    {
+      "output": "vacuum/cover.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/01_vacuum/slide08_img01.jpeg",
+      "sourceSha256": "ca89a85601a0e4539d98ed0f7af4b8c5a52cb2f3db9a4e6590a49ae192a47ff8",
+      "sha256": "3e5a8d3b5e69663bf36327f7ede3accdec2c40af44b8a05a5337cea8e74fc7f9",
+      "sourceSize": [
+        1360,
+        1400
+      ],
+      "crop": null,
+      "outputSize": [
+        1360,
+        1400
+      ],
+      "bytes": 14942,
+      "purpose": "hero",
+      "maxCssWidth": 680,
+      "maxCssHeight": 700
+    },
+    {
+      "output": "vacuum/product-model.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/01_vacuum/slide05_img02.png",
+      "sourceSha256": "beb1d4f78e61990da6b86facf461607b851ab48f1ba3db84fd139d94b44478be",
+      "sha256": "937ac1117253044582434b68933ff6395a43fb9da5e0cd7b343af718267f49cb",
+      "sourceSize": [
+        1290,
+        1184
+      ],
+      "crop": null,
+      "outputSize": [
+        1290,
+        1184
+      ],
+      "bytes": 28406,
+      "purpose": "evidence",
+      "maxCssWidth": 640,
+      "maxCssHeight": 588
+    },
+    {
+      "output": "vacuum/mechanism.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/01_vacuum/slide06_img01.png",
+      "sourceSha256": "553589ed6538c40b3ce63153cbff5b15d9dfca0e26858801f7c18a7ae5cf04df",
+      "sha256": "0c9ad273aa81e0a44d091c8026458d960c751e9d6139a9a5e67645e286365e54",
+      "sourceSize": [
+        859,
+        483
+      ],
+      "crop": null,
+      "outputSize": [
+        859,
+        483
+      ],
+      "bytes": 12600,
+      "purpose": "inline",
+      "maxCssWidth": 572,
+      "maxCssHeight": 322
+    },
+    {
+      "output": "vacuum/route-study.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/01_vacuum/slide06_img02.png",
+      "sourceSha256": "4e58da22dda090db238792ded1c235182fbf88c8809e7c31630dc0e907b3adb7",
+      "sha256": "8d26232f2db3fafd3b764ebf88852c186e9120f6b8da5213ff166ed4136fe2ff",
+      "sourceSize": [
+        859,
+        687
+      ],
+      "crop": null,
+      "outputSize": [
+        859,
+        687
+      ],
+      "bytes": 23650,
+      "purpose": "inline",
+      "maxCssWidth": 572,
+      "maxCssHeight": 458
+    },
+    {
+      "output": "glove/sketches.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/06_glove/page01.png",
+      "sourceSha256": "b9a3a40556d461798a3852e09d8625a01e825cd1681c00421c93fe7709a710a8",
+      "sha256": "45bf7294000a471ccd7fe31ba55d4a565f8e71a6cc7f9a824346e8d8871cf021",
+      "sourceSize": [
+        3076,
+        6591
+      ],
+      "crop": [
+        1350,
+        40,
+        3040,
+        1100
+      ],
+      "outputSize": [
+        1690,
+        1060
+      ],
+      "bytes": 122518,
+      "purpose": "evidence",
+      "maxCssWidth": 1120,
+      "maxCssHeight": 700
+    },
+    {
+      "output": "glove/final-illustration.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/06_glove/page01.png",
+      "sourceSha256": "b9a3a40556d461798a3852e09d8625a01e825cd1681c00421c93fe7709a710a8",
+      "sha256": "1853478f71038de52f4f39de858a1edb91d5346e4c0b99275a61e548d557233d",
+      "sourceSize": [
+        3076,
+        6591
+      ],
+      "crop": [
+        1450,
+        2500,
+        2850,
+        3500
+      ],
+      "outputSize": [
+        1400,
+        1000
+      ],
+      "bytes": 88170,
+      "purpose": "hero",
+      "maxCssWidth": 720,
+      "maxCssHeight": 580
+    },
+    {
+      "output": "glove/interface.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/06_glove/page01.png",
+      "sourceSha256": "b9a3a40556d461798a3852e09d8625a01e825cd1681c00421c93fe7709a710a8",
+      "sha256": "18ee937e63c10dc70bee92a3528e333bb0528df537c24358d4a2cfca8c72bda6",
+      "sourceSize": [
+        3076,
+        6591
+      ],
+      "crop": [
+        1500,
+        4550,
+        3076,
+        5400
+      ],
+      "outputSize": [
+        1576,
+        850
+      ],
+      "bytes": 59918,
+      "purpose": "evidence",
+      "maxCssWidth": 1000,
+      "maxCssHeight": 540
+    },
+    {
+      "output": "biomaterials/application.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/05_materials/page55.png",
+      "sourceSha256": "3d1dba5088620ba1ca85e9537154f31b3371358141d9508e9c8f23467b09fed3",
+      "sha256": "8fdeb2815eff8b4c123469f6c9aba798884e54c867db562d463a70c7c9099e3f",
+      "sourceSize": [
+        1488,
+        837
+      ],
+      "crop": [
+        0,
+        0,
+        1488,
+        600
+      ],
+      "outputSize": [
+        1488,
+        600
+      ],
+      "bytes": 44408,
+      "purpose": "hero",
+      "maxCssWidth": 720,
+      "maxCssHeight": 290
+    },
+    {
+      "output": "biomaterials/mangosteen-samples.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/05_materials/page33.png",
+      "sourceSha256": "e4890bff3d62cfd94463036fb48ac4509c3ce92234875db5fb85d0d574a3bdb1",
+      "sha256": "74cd0c881cb0cdef8a906f8b2ae8bb6c570bdd1d0a26f0f360514df9fcf0353e",
+      "sourceSize": [
+        1488,
+        837
+      ],
+      "crop": [
+        35,
+        220,
+        675,
+        710
+      ],
+      "outputSize": [
+        640,
+        490
+      ],
+      "bytes": 18636,
+      "purpose": "evidence",
+      "maxCssWidth": 420,
+      "maxCssHeight": 320
+    },
+    {
+      "output": "biomaterials/pineapple-sample-03.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/05_materials/page42.png",
+      "sourceSha256": "4af80fb3a9860dfa30b51fc79f62001a153f44baf3d7cc695dbc2f0b53459a3e",
+      "sha256": "c028f882554c5492f73ffb86542fb26537905cdfe2f10255615e329ebda1eef9",
+      "sourceSize": [
+        1488,
+        837
+      ],
+      "crop": [
+        900,
+        140,
+        1400,
+        710
+      ],
+      "outputSize": [
+        500,
+        570
+      ],
+      "bytes": 11766,
+      "purpose": "evidence",
+      "maxCssWidth": 330,
+      "maxCssHeight": 320
+    },
+    {
+      "output": "grinder/cover.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/02_grinder/slide53_img01.png",
+      "sourceSha256": "a79284f535f3d49f98b02ae6bdbe353ce5afe1fa9f0018a8201646d4574c4b9c",
+      "sha256": "66f1c298f4df55df24295e068a139feeeecd07addafabc7cc1344fb3fad6330e",
+      "sourceSize": [
+        2560,
+        1440
+      ],
+      "crop": null,
+      "outputSize": [
+        1920,
+        1080
+      ],
+      "bytes": 23644,
+      "purpose": "hero",
+      "maxCssWidth": 960,
+      "maxCssHeight": 540
+    },
+    {
+      "output": "grinder/context.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/02_grinder/slide54_img01.png",
+      "sourceSha256": "06b674561b1db81e6841a72bd622f97cc41d678962c043a2923c28bfdb16345f",
+      "sha256": "8eb4b249154e6bc01edd363c61b281057f465dd68f2421f1e0de25a829255b42",
+      "sourceSize": [
+        2560,
+        1440
+      ],
+      "crop": null,
+      "outputSize": [
+        1920,
+        1080
+      ],
+      "bytes": 150064,
+      "purpose": "evidence",
+      "maxCssWidth": 960,
+      "maxCssHeight": 540
+    },
+    {
+      "output": "grinder/exploded.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/02_grinder/slide56_img01.png",
+      "sourceSha256": "bd4bb34b6709b6a6e23b554bfafcd6e39732fc4ea18e425e4e2ce113b0d4a9ef",
+      "sha256": "883df47893bb7d5e9f291246018f99e036b88e514d33f85c765765725c570274",
+      "sourceSize": [
+        1440,
+        2560
+      ],
+      "crop": null,
+      "outputSize": [
+        788,
+        1400
+      ],
+      "bytes": 230838,
+      "purpose": "lightbox",
+      "maxCssWidth": 500,
+      "maxCssHeight": 900
+    },
+    {
+      "output": "grinder/final.webp",
+      "source": "outputs/manual-20260520-ey-portfolio/presentations/ey-portfolio/assets/02_grinder/slide63_img01.png",
+      "sourceSha256": "831c79a1410bfff3b0f78c017df576d52529f7a2db2a693d70850b7dfb4afa98",
+      "sha256": "8f224273d38f32108c848ff317ecea1fb4a4f54caba924114fba12ff0cdffed5",
+      "sourceSize": [
+        2560,
+        1440
+      ],
+      "crop": null,
+      "outputSize": [
+        1920,
+        1080
+      ],
+      "bytes": 22860,
+      "purpose": "evidence",
+      "maxCssWidth": 960,
+      "maxCssHeight": 540
+    }
+  ]
+}
