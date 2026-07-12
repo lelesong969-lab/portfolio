@@ -6,7 +6,7 @@ import { siteContent } from "@/content/site";
 import type { ProjectCase } from "@/content/types";
 import { openGraphImageConfig } from "@/lib/seo-config";
 
-const localSiteUrl = "http://localhost:3000";
+const publicSiteUrl = "https://leyang-portfolio-site.vercel.app";
 
 export function resolveSiteUrl(
   value: string | undefined,
@@ -30,7 +30,7 @@ export function resolveSiteUrl(
     }
   }
 
-  return localSiteUrl;
+  return publicSiteUrl;
 }
 
 export const siteConfig = Object.freeze({

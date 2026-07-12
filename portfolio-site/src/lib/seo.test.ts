@@ -38,9 +38,15 @@ function canonicalOf(metadata: typeof homeMetadata): string {
 
 describe("SEO metadata", () => {
   it("uses an explicit public URL or the safe local fallback", () => {
-    expect(resolveSiteUrl(undefined)).toBe("http://localhost:3000");
-    expect(resolveSiteUrl("not-a-url")).toBe("http://localhost:3000");
-    expect(resolveSiteUrl("javascript:alert(1)")).toBe("http://localhost:3000");
+    expect(resolveSiteUrl(undefined)).toBe(
+      "https://leyang-portfolio-site.vercel.app",
+    );
+    expect(resolveSiteUrl("not-a-url")).toBe(
+      "https://leyang-portfolio-site.vercel.app",
+    );
+    expect(resolveSiteUrl("javascript:alert(1)")).toBe(
+      "https://leyang-portfolio-site.vercel.app",
+    );
     expect(resolveSiteUrl("https://localhost:4443/")).toBe(
       "https://localhost:4443",
     );
