@@ -6,7 +6,7 @@ import { siteContent } from "@/content/site";
 import type { ProjectCase } from "@/content/types";
 import { openGraphImageConfig } from "@/lib/seo-config";
 
-const publicSiteUrl = "https://leyang-portfolio-site.vercel.app";
+const publicSiteUrl = "https://portfolio-nu-red-25.vercel.app";
 
 export function resolveSiteUrl(
   value: string | undefined,
