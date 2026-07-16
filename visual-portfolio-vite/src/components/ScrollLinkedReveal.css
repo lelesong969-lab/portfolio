@@ -1,0 +1,27 @@
+.scroll-linked-reveal {
+  --scroll-reveal-progress: 0;
+  position: relative;
+  min-width: 0;
+  will-change: transform, opacity, filter, clip-path;
+}
+
+.scroll-linked-reveal--water::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  right: 3%;
+  bottom: calc((1 - var(--scroll-reveal-progress)) * 38%);
+  left: 3%;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, transparent, rgba(213, 173, 88, .18), rgba(24, 24, 23, .16), transparent);
+  filter: blur(4px);
+  opacity: calc((1 - var(--scroll-reveal-progress)) * .6);
+  transform: scaleX(calc(.72 + var(--scroll-reveal-progress) * .28));
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-linked-reveal { opacity: 1 !important; filter: none !important; clip-path: none !important; transform: none !important; }
+  .scroll-linked-reveal--water::after { display: none; }
+}
