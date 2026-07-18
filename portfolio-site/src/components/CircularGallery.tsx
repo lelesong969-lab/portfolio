@@ -263,8 +263,8 @@ export default function CircularGallery({ items }: CircularGalleryProps) {
     centerGallery();
     const initialFrame = window.requestAnimationFrame(centerGallery);
     const initialTimer = window.setTimeout(centerGallery, 120);
-    const resizeObserver = new ResizeObserver(requestDepth);
-    resizeObserver.observe(container);
+    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(requestDepth) : null;
+    resizeObserver?.observe(container);
     container.addEventListener("scroll", requestDepth, { passive: true });
     window.addEventListener("scroll", updateScrollMotion, { passive: true });
 
@@ -272,7 +272,7 @@ export default function CircularGallery({ items }: CircularGalleryProps) {
       window.cancelAnimationFrame(initialFrame);
       window.clearTimeout(initialTimer);
       window.cancelAnimationFrame(depthFrameRef.current);
-      resizeObserver.disconnect();
+      resizeObserver?.disconnect();
       container.removeEventListener("scroll", requestDepth);
       window.removeEventListener("scroll", updateScrollMotion);
     };

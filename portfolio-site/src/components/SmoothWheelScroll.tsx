@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { supportsAdvancedVisualEffects } from "../utils/platform";
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -31,7 +32,7 @@ const normalizeWheelDelta = (event: WheelEvent) => {
 
 export default function SmoothWheelScroll() {
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!supportsAdvancedVisualEffects() || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let currentY = window.scrollY;
     let targetY = currentY;

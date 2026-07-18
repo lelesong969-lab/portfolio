@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
+import { supportsAdvancedVisualEffects } from "../utils/platform";
 
 const LiquidEther = lazy(() => import("./LiquidEther/LiquidEther"));
 
@@ -14,10 +15,7 @@ export default function FinalContentSection({ children }: FinalContentSectionPro
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section || !("IntersectionObserver" in window)) {
-      setShouldLoadEther(true);
-      return;
-    }
+    if (!section || !supportsAdvancedVisualEffects()) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {

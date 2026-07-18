@@ -10,6 +10,7 @@ import StarRevealTransition from "./components/StarRevealTransition";
 import ScrollFloat from "./components/ScrollFloat";
 import { projects, type Project } from "./data/portfolio";
 import { projectRouteClass, projectTheme } from "./data/projectTheme";
+import { supportsAdvancedVisualEffects } from "./utils/platform";
 
 const ProjectCaseStudy = lazy(() => import("./components/ProjectCaseStudy"));
 
@@ -38,17 +39,18 @@ function PosterHero() {
   const headerRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const finalTitleRef = useRef<HTMLHeadingElement>(null);
+  const canAnimate = supportsAdvancedVisualEffects();
 
   return (
     <>
       <SiteHeader headerRef={headerRef} />
-      <section id="top" ref={heroRef} className="poster-hero" aria-labelledby="poster-title">
+      <section id="top" ref={heroRef} className={`poster-hero${canAnimate ? "" : " poster-hero--static"}`} aria-labelledby="poster-title">
         <video className="poster-hero__video" autoPlay muted loop playsInline preload="metadata" aria-hidden="true">
           <source src="/media/hero-background.mp4" type="video/mp4" />
         </video>
         <div className="poster-hero__video-wash" aria-hidden="true" />
         <img className="poster-hero__texture" src="/media/paper-grain.webp" alt="" aria-hidden="true" />
-        <OpeningAnimation headerRef={headerRef} heroRef={heroRef} titleRef={finalTitleRef} />
+        {canAnimate ? <OpeningAnimation headerRef={headerRef} heroRef={heroRef} titleRef={finalTitleRef} /> : null}
         <div className="poster-hero__frame section-shell">
           <div className="poster-hero__space">
             <h1 ref={finalTitleRef} id="poster-title" className="poster-hero__nameplate poster-hero__nameplate--final">LEYANG</h1>

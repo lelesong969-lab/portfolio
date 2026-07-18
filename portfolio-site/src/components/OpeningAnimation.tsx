@@ -1,5 +1,6 @@
 import { useEffect, useRef, type RefObject } from "react";
 import { gsap } from "gsap";
+import { supportsAdvancedVisualEffects } from "../utils/platform";
 
 type OpeningAnimationProps = {
   headerRef: RefObject<HTMLElement | null>;
@@ -10,8 +11,10 @@ type OpeningAnimationProps = {
 export default function OpeningAnimation({ headerRef, heroRef, titleRef }: OpeningAnimationProps) {
   const stageRef = useRef<HTMLDivElement>(null);
   const flightTitleRef = useRef<HTMLDivElement>(null);
+  const canAnimate = supportsAdvancedVisualEffects();
 
   useEffect(() => {
+    if (!canAnimate) return;
     const finalTitle = titleRef.current;
     const header = headerRef.current;
     const hero = heroRef.current;
@@ -139,15 +142,25 @@ export default function OpeningAnimation({ headerRef, heroRef, titleRef }: Openi
       }, stage);
     };
 
-    const fallbackFrame = window.requestAnimationFrame(start);
-    void document.fonts.ready.then(start);
+    const startSafely = () => {
+      try {
+        start();
+      } catch {
+        finish();
+      }
+    };
+
+    const fallbackFrame = window.requestAnimationFrame(startSafely);
+    void document.fonts.ready.then(startSafely).catch(finish);
     return () => {
       disposed = true;
       window.cancelAnimationFrame(fallbackFrame);
       context?.revert();
       finish();
     };
-  }, [headerRef, heroRef, titleRef]);
+  }, [canAnimate, headerRef, heroRef, titleRef]);
+
+  if (!canAnimate) return null;
 
   return (
     <>

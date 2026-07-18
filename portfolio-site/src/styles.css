@@ -146,6 +146,7 @@ img { display: block; max-width: 100%; }
 .opening-animation__title-accent--left { top: 39%; left: clamp(2rem, 18vw, 18rem); }
 .opening-animation__title-accent--right { right: clamp(2rem, 18vw, 18rem); bottom: 36%; }
 .poster-hero__nameplate--final { visibility: hidden; }
+.poster-hero--static .poster-hero__nameplate--final { visibility: visible; }
 .poster-hero__frame { position: relative; z-index: 3; min-height: 100dvh; padding-top: 5.25rem; }
 .poster-hero__space {
   min-height: clamp(12rem, 27vh, 20rem);
