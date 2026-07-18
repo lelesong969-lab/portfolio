@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     legacy({
       targets: ["Chrome >= 49", "Edge >= 15", "Safari >= 10"],
-      modernPolyfills: true,
+      modernPolyfills: false,
     }),
   ],
 });

@@ -271,7 +271,7 @@ function FlowingMenuRow({
             <span>{project.titleEn}</span>
           </span>
           <span className="flowing-menu__mobile-image" aria-hidden="true">
-            <img src={project.coverImage} alt="" loading="lazy" />
+            <img src={project.coverImage} alt="" loading="lazy" decoding="async" />
           </span>
         </span>
       </a>

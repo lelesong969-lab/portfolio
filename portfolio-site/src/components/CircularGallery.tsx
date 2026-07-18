@@ -195,7 +195,7 @@ function GravityCard({
           onFocus={() => { setHoverTargets(true); onActiveChange(index); }}
           onBlur={() => { setHoverTargets(false); onActiveChange(null); }}
         >
-          <img src={item.image} alt="" draggable={false} />
+          <img src={item.image} alt="" decoding="async" draggable={false} />
           <span className="floating-gallery__project-quote" aria-hidden="true">
             <span className="floating-gallery__quote-mark floating-gallery__quote-mark--open">“</span>
             <span className="floating-gallery__quote-copy">{item.previewLabel}</span>
@@ -254,6 +254,15 @@ export default function CircularGallery({ items }: CircularGalleryProps) {
       if (depthFrameRef.current === 0) depthFrameRef.current = window.requestAnimationFrame(updateDepth);
     };
 
+    let scrollFrameId = 0;
+    const requestScrollMotion = () => {
+      if (scrollFrameId) return;
+      scrollFrameId = window.requestAnimationFrame(() => {
+        scrollFrameId = 0;
+        updateScrollMotion();
+      });
+    };
+
     const centerGallery = () => {
       container.scrollLeft = Math.max(0, (container.scrollWidth - container.clientWidth) / 2);
       updateDepth();
@@ -266,15 +275,16 @@ export default function CircularGallery({ items }: CircularGalleryProps) {
     const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(requestDepth) : null;
     resizeObserver?.observe(container);
     container.addEventListener("scroll", requestDepth, { passive: true });
-    window.addEventListener("scroll", updateScrollMotion, { passive: true });
+    window.addEventListener("scroll", requestScrollMotion, { passive: true });
 
     return () => {
       window.cancelAnimationFrame(initialFrame);
       window.clearTimeout(initialTimer);
       window.cancelAnimationFrame(depthFrameRef.current);
+      window.cancelAnimationFrame(scrollFrameId);
       resizeObserver?.disconnect();
       container.removeEventListener("scroll", requestDepth);
-      window.removeEventListener("scroll", updateScrollMotion);
+      window.removeEventListener("scroll", requestScrollMotion);
     };
   }, [items]);
 
