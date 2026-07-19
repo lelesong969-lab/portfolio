@@ -66,8 +66,11 @@ function VelocityText({
     let offset = 0;
     let direction = 1;
     let frameId = 0;
+    let isActive = false;
 
     const render = (time: number) => {
+      frameId = 0;
+      if (!isActive) return;
       const delta = Math.min(.05, Math.max(.001, (time - previousTime) / 1000));
       const currentScroll = getScrollPosition();
       const rawVelocity = (currentScroll - previousScroll) / delta;
@@ -91,8 +94,32 @@ function VelocityText({
       frameId = window.requestAnimationFrame(render);
     };
 
-    frameId = window.requestAnimationFrame(render);
-    return () => window.cancelAnimationFrame(frameId);
+    const startRender = () => {
+      if (!isActive || frameId) return;
+      previousScroll = getScrollPosition();
+      previousTime = performance.now();
+      frameId = window.requestAnimationFrame(render);
+    };
+    const stopRender = () => {
+      if (!frameId) return;
+      window.cancelAnimationFrame(frameId);
+      frameId = 0;
+    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isActive = entry.isIntersecting;
+        if (isActive) startRender();
+        else stopRender();
+      },
+      { rootMargin: "200px 0px" },
+    );
+    const scroller = scrollerRef.current;
+    if (scroller) observer.observe(scroller);
+
+    return () => {
+      stopRender();
+      observer.disconnect();
+    };
   }, [baseVelocity, copyWidth, damping, scrollContainerRef, stiffness, velocityMapping]);
 
   const spokenText = typeof children === "string" ? children.replace(/\s+/g, " ").trim() : undefined;

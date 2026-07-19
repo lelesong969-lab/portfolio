@@ -68,8 +68,8 @@ img { display: block; max-width: 100%; }
 .eyebrow { margin: 0; color: var(--ink-muted); font: 500 .69rem/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
 
 .site-header {
-  position: absolute;
-  z-index: 20;
+  position: fixed;
+  z-index: 900;
   inset: 0 0 auto;
   width: min(100% - 2.5rem, 1320px);
   min-height: 5.25rem;
@@ -79,9 +79,19 @@ img { display: block; max-width: 100%; }
   align-items: center;
   justify-content: space-between;
   color: var(--ink);
+  pointer-events: none;
 }
-.brand-mark { font: 600 1.55rem/1 var(--mono); letter-spacing: -.13em; }
+.brand-mark { font: 600 1.55rem/1 var(--mono); letter-spacing: -.13em; pointer-events: auto; }
 .brand-mark span { color: var(--blue); }
+.site-nav {
+  position: absolute;
+  top: .78rem;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
 .button, .text-link { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 .site-shell > .site-header { display: none; }
 
@@ -191,7 +201,8 @@ img { display: block; max-width: 100%; }
 .contact { position: relative; }
 .contact::after { display: none; }
 .contact__topbar { display: flex; justify-content: flex-end; margin-top: clamp(-1.8rem, -2vw, -.8rem); }
-.contact__top-link { display: inline-flex; align-items: center; gap: .4rem; letter-spacing: .04em; }
+.contact__top-link { display: inline-flex; align-items: center; }
+.contact__top-link .gooey-nav-container nav ul { gap: 0; }
 .contact-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr); gap: clamp(3rem, 8vw, 8rem); align-items: end; margin-top: clamp(2.5rem, 7vw, 6rem); }
 .contact-layout h2 { position: relative; z-index: 1; max-width: 7.2em; margin: 0; font: 500 clamp(3.5rem, 7.2vw, 7.4rem)/.9 var(--display); letter-spacing: -.06em; }
 .contact-title__line { display: block; max-width: 100%; }
@@ -285,6 +296,7 @@ img { display: block; max-width: 100%; }
 @media (max-width: 780px) {
   .section-shell { width: min(100% - 1.5rem, 1320px); }
   .site-header { width: min(100% - 1.5rem, 1320px); min-height: 4.75rem; grid-template-columns: 1fr; }
+  .site-nav { top: .65rem; left: auto; right: 0; transform: none; }
 
   .poster-hero { padding-bottom: 1.4rem; }
   .poster-hero__frame { padding-top: 4.75rem; }

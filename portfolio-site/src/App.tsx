@@ -3,6 +3,7 @@ import AboutIntroSection from "./components/AboutIntroSection";
 import CircularGallery from "./components/CircularGallery";
 import ClosingStarTransition from "./components/ClosingStarTransition";
 import FinalContentSection from "./components/FinalContentSection";
+import GooeyNav from "./components/GooeyNav";
 import OpeningAnimation from "./components/OpeningAnimation";
 import PositioningMark from "./components/PositioningMark";
 import ProjectGallerySection from "./components/ProjectGallerySection";
@@ -15,6 +16,14 @@ import { supportsAdvancedVisualEffects } from "./utils/platform";
 const ProjectCaseStudy = lazy(() => import("./components/ProjectCaseStudy"));
 
 type OpenProject = (project: Project) => void;
+
+const navigationItems = [
+  { label: "首页", href: "#top" },
+  { label: "项目信息", href: "#work" },
+  { label: "联系方式", href: "#contact" },
+];
+
+const backToTopItem = [{ label: "↑ 回到顶部", href: "#top" }];
 
 const heroGalleryItems = projects.map((project) => ({
   image: project.coverImage,
@@ -31,6 +40,7 @@ function SiteHeader({ headerRef }: { headerRef: RefObject<HTMLElement | null> })
   return (
     <header ref={headerRef} className="site-header">
       <a className="brand-mark" href="#top" aria-label="Return to the page top">LS<span>.</span></a>
+      <div className="site-nav"><GooeyNav items={navigationItems} /></div>
     </header>
   );
 }
@@ -38,14 +48,48 @@ function SiteHeader({ headerRef }: { headerRef: RefObject<HTMLElement | null> })
 function PosterHero() {
   const headerRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const finalTitleRef = useRef<HTMLHeadingElement>(null);
   const canAnimate = supportsAdvancedVisualEffects();
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    const video = videoRef.current;
+    if (!hero || !video) return;
+
+    let isVisible = true;
+    const syncPlayback = () => {
+      if (isVisible && !document.hidden) {
+        void video.play().catch(() => undefined);
+      } else {
+        video.pause();
+      }
+    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        syncPlayback();
+      },
+      { threshold: .01 },
+    );
+    const handleVisibilityChange = () => syncPlayback();
+
+    observer.observe(hero);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    syncPlayback();
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      video.pause();
+    };
+  }, []);
 
   return (
     <>
       <SiteHeader headerRef={headerRef} />
       <section id="top" ref={heroRef} className={`poster-hero${canAnimate ? "" : " poster-hero--static"}`} aria-labelledby="poster-title">
-        <video className="poster-hero__video" autoPlay muted loop playsInline preload="metadata" aria-hidden="true">
+        <video ref={videoRef} className="poster-hero__video" autoPlay muted loop playsInline preload="metadata" aria-hidden="true">
           <source src="/media/hero-background.mp4" type="video/mp4" />
         </video>
         <div className="poster-hero__video-wash" aria-hidden="true" />
@@ -168,7 +212,14 @@ function App() {
           <div className="contact section-shell">
             <p className="eyebrow final-content__content-left">C / Start a conversation</p>
             <div className="contact__topbar">
-              <a className="button button--dark contact__top-link" href="#top">↑ 回到顶部</a>
+              <div className="contact__top-link">
+                <GooeyNav
+                  items={backToTopItem}
+                  initialActiveIndex={-1}
+                  particleCount={9}
+                  particleDistances={[46, 7]}
+                />
+              </div>
             </div>
             <div className="contact-layout">
               <h2 id="contact-title" className="final-content__content-left contact-title">

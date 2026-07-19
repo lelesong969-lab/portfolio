@@ -42,9 +42,11 @@ export default function AboutIntroSection() {
     let frameId = 0;
     let lastTime = performance.now();
     let disposed = false;
+    let isActive = false;
 
     const render = (time: number) => {
-      if (disposed) return;
+      frameId = 0;
+      if (disposed || !isActive) return;
       const rect = section.getBoundingClientRect();
       const triggerLine = window.innerHeight * .68;
       targetProgress = clamp((triggerLine - rect.top) / Math.max(1, rect.height + triggerLine));
@@ -88,11 +90,30 @@ export default function AboutIntroSection() {
       frameId = window.requestAnimationFrame(render);
     };
 
-    frameId = window.requestAnimationFrame(render);
+    const startRender = () => {
+      if (disposed || !isActive || frameId) return;
+      lastTime = performance.now();
+      frameId = window.requestAnimationFrame(render);
+    };
+    const stopRender = () => {
+      if (!frameId) return;
+      window.cancelAnimationFrame(frameId);
+      frameId = 0;
+    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isActive = entry.isIntersecting;
+        if (isActive) startRender();
+        else stopRender();
+      },
+      { rootMargin: "50% 0px" },
+    );
+    observer.observe(section);
 
     return () => {
       disposed = true;
-      window.cancelAnimationFrame(frameId);
+      stopRender();
+      observer.disconnect();
       gsap.killTweensOf(blocks);
     };
   }, []);

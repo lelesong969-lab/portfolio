@@ -155,6 +155,7 @@ function StarRevealTransition({
     let disposed = false;
     let initialized = false;
     let activePhase: "opening" | "idle" | "closing" = "opening";
+    let isMotionActive = false;
 
     const measureClosingCoverScale = () => {
       const baseWidth = Math.max(1, shape.clientWidth);
@@ -312,7 +313,8 @@ function StarRevealTransition({
     };
 
     const renderFrame = (time: number) => {
-      if (disposed) return;
+      frameId = 0;
+      if (disposed || !isMotionActive) return;
       const deltaSeconds = Math.min(.032, Math.max(.001, (time - lastTime) / 1000));
       lastTime = time;
       const previousRawProgress = rawProgress;
@@ -389,6 +391,17 @@ function StarRevealTransition({
       frameId = window.requestAnimationFrame(renderFrame);
     };
 
+    const startRender = () => {
+      if (disposed || !isMotionActive || frameId) return;
+      lastTime = performance.now();
+      frameId = window.requestAnimationFrame(renderFrame);
+    };
+    const stopRender = () => {
+      if (!frameId) return;
+      window.cancelAnimationFrame(frameId);
+      frameId = 0;
+    };
+
     hostStar(stage);
     resetEntrance();
     resetCharacters(helloCharacters);
@@ -411,14 +424,29 @@ function StarRevealTransition({
     const resizeObserver = new ResizeObserver(refreshLayout);
     resizeObserver.observe(stage);
     resizeObserver.observe(closingStage);
+    const visibility = new Map<Element, boolean>([
+      [portal, false],
+      [closingPortal, false],
+    ]);
+    const intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => visibility.set(entry.target, entry.isIntersecting));
+        isMotionActive = Array.from(visibility.values()).some(Boolean);
+        if (isMotionActive) startRender();
+        else stopRender();
+      },
+      { rootMargin: "100% 0px" },
+    );
+    intersectionObserver.observe(portal);
+    intersectionObserver.observe(closingPortal);
     window.addEventListener("wheel", noteWheelInput, { passive: true });
     window.addEventListener("resize", refreshLayout, { passive: true });
     window.addEventListener("orientationchange", refreshLayout);
-    frameId = window.requestAnimationFrame(renderFrame);
 
     return () => {
       disposed = true;
-      window.cancelAnimationFrame(frameId);
+      stopRender();
+      intersectionObserver.disconnect();
       resizeObserver.disconnect();
       window.removeEventListener("wheel", noteWheelInput);
       window.removeEventListener("resize", refreshLayout);
