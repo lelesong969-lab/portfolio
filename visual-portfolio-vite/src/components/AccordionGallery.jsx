@@ -43,7 +43,11 @@ const AccordionGallery = ({
 
   const vertical = orientation === 'vertical';
   const count = items.length;
-  const [active, setActive] = useState(Math.min(Math.max(defaultIndex, 0), count - 1));
+  const [active, setActive] = useState(count ? Math.min(Math.max(defaultIndex, 0), count - 1) : 0);
+
+  useEffect(() => {
+    setActive(current => (count ? Math.min(Math.max(current, 0), count - 1) : 0));
+  }, [count]);
 
   const prefersReduced =
     typeof window !== 'undefined' && window.matchMedia
@@ -187,7 +191,7 @@ const AccordionGallery = ({
         '--ag-radius': `${radius}px`,
         height: vertical ? `${Math.round(height * 1.6)}px` : `${height}px`
       }}
-      role="list"
+      role="group"
       aria-label="Image accordion gallery"
     >
       {items.map((item, i) => {
@@ -204,7 +208,7 @@ const AccordionGallery = ({
             onMouseEnter={() => handleEnter(i)}
             onFocus={() => setActive(i)}
             onKeyDown={e => handleKeyDown(i, e)}
-            role="listitem"
+            role={item.link ? undefined : 'button'}
             tabIndex={0}
             aria-current={isActive ? 'true' : undefined}
             aria-label={item.label}

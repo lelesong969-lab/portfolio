@@ -34,7 +34,7 @@
 .ag-panel__bar { flex: 0 0 auto; width: 3px; height: 26px; border-radius: 3px; background: var(--ag-accent); opacity: 0; box-shadow: 0 0 12px color-mix(in srgb, var(--ag-accent) 60%, transparent); }
 .ag-panel__text { color: var(--ag-text); font-family: inherit; font-weight: 600; font-size: clamp(1rem, 1.4vw, 1.4rem); letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; text-shadow: 0 2px 14px rgba(0,0,0,.55); }
 @media (max-width: 520px) {
-  .accordion-gallery { flex-direction: column; perspective: none; height: auto !important; }
+  .accordion-gallery { flex-direction: column; perspective: none; height: clamp(500px, 74vh, 620px) !important; }
   .ag-panel { min-height: 84px; transform: none !important; }
   .accordion-gallery .ag-panel__media { width: 100%; height: var(--ag-media-size); }
 }
