@@ -169,8 +169,8 @@ const AccordionGallery = ({
     }
   };
 
-  const handleKeyDown = (i, e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+  const handleKeyDown = (i, e, isLink) => {
+    if (!isLink && (e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault();
       if (i !== active) setActive(i);
     } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -210,7 +210,7 @@ const AccordionGallery = ({
             onClick={e => handleClick(i, e)}
             onMouseEnter={() => handleEnter(i)}
             onFocus={() => setActive(i)}
-            onKeyDown={e => handleKeyDown(i, e)}
+            onKeyDown={e => handleKeyDown(i, e, Boolean(item.link))}
             role={item.link ? undefined : 'button'}
             tabIndex={0}
             aria-current={isActive ? 'true' : undefined}
