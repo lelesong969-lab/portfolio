@@ -23,13 +23,13 @@ test("language selection is session-scoped and updates the document language", a
   assert.match(app, /document\.documentElement\.lang = language === "en" \? "en" : "zh-CN"/);
 });
 
-test("the header and homepage content expose complete English and Chinese states", async () => {
-  const [app, welcome, about, projects, menu] = await Promise.all([
+test("the header, homepage content, and project gallery expose complete English and Chinese states", async () => {
+  const [app, welcome, about, projectSection, gallery] = await Promise.all([
     read("src/App.tsx"),
     read("src/components/StarRevealTransition.tsx"),
     read("src/components/AboutIntroSection.tsx"),
     read("src/components/ProjectGallerySection.tsx"),
-    read("src/components/FlowingMenu/FlowingMenu.tsx"),
+    read("src/components/AccordionGallery.jsx"),
   ]);
 
   assert.match(app, /HOME/);
@@ -43,8 +43,36 @@ test("the header and homepage content expose complete English and Chinese states
   assert.match(app, /中文/);
   assert.match(welcome, /language: Language/);
   assert.match(about, /language: Language/);
-  assert.match(projects, /language: Language/);
-  assert.match(menu, /language: Language/);
+  assert.match(projectSection, /language: Language/);
+  assert.match(projectSection, /label: language === "en" \? project\.titleEn : project\.titleZh/);
+  assert.match(projectSection, /alt: language === "en" \? project\.detailEn\.alt : project\.alt/);
+  assert.match(projectSection, /ariaLabel=\{language === "en" \? "Portfolio project gallery" : "作品集项目画廊"\}/);
+  assert.match(gallery, /ariaLabel = 'Image accordion gallery'/);
+});
+
+test("language changes use a full-screen cover, commit, and uncover cycle", async () => {
+  const [app, transition, styles] = await Promise.all([
+    read("src/App.tsx"),
+    read("src/components/LanguagePixelTransition.tsx"),
+    read("src/components/LanguagePixelTransition.css"),
+  ]);
+
+  assert.match(app, /const \[pendingLanguage, setPendingLanguage\] = useState<Language \| null>\(null\)/);
+  assert.match(app, /pendingLanguageRef\.current = nextLanguage;[\s\S]*setPendingLanguage\(nextLanguage\)/);
+  assert.match(app, /const commitLanguageChange[\s\S]*setLanguage\(nextLanguage\)/);
+  assert.match(app, /targetLanguage=\{pendingLanguage\}/);
+  assert.match(app, /onCovered=\{commitLanguageChange\}/);
+  assert.match(app, /onFinish=\{finishLanguageChange\}/);
+  assert.equal((app.match(/\{languageTransition\}/g) ?? []).length, 2);
+  assert.match(transition, /setIsCovered\(true\)/);
+  assert.match(transition, /onCoveredRef\.current\(cycle\.target\)/);
+  assert.match(transition, /setIsCovered\(false\)/);
+  assert.match(transition, /active=\{isCovered\}/);
+  assert.match(transition, /curtain/);
+  assert.match(styles, /\.language-pixel-transition[^}]*position:\s*fixed[^}]*inset:\s*0[^}]*z-index:\s*10000/s);
+  assert.match(styles, /width:\s*100vw/);
+  assert.match(styles, /height:\s*100dvh/);
+  assert.match(styles, /#f1ede5[\s\S]*#11110f[\s\S]*#8fc79d/);
 });
 
 test("the bilingual mobile header does not force a 320px page width", async () => {

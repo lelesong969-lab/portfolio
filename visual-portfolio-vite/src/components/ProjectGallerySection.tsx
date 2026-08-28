@@ -66,6 +66,7 @@ export default function ProjectGallerySection({ projects, onOpenProject, languag
     label: language === "en" ? project.titleEn : project.titleZh,
     alt: language === "en" ? project.detailEn.alt : project.alt,
     link: project.href,
+    itemId: project.slug,
   }));
 
   const getPanelIndex = (target: EventTarget | null, gallery: HTMLElement) => {
@@ -119,6 +120,7 @@ export default function ProjectGallerySection({ projects, onOpenProject, languag
         >
           <AccordionGallery
             items={galleryItems}
+            ariaLabel={language === "en" ? "Portfolio project gallery" : "作品集项目画廊"}
             defaultIndex={2}
             accentColor="#8fc79d"
             overlayColor="#11110f"

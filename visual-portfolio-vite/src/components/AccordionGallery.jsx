@@ -30,7 +30,8 @@ const AccordionGallery = ({
   trigger = 'hover',
   showLabels = true,
   grayscale = true,
-  className = ''
+  className = '',
+  ariaLabel = 'Image accordion gallery'
 }) => {
   const rootRef = useRef(null);
   const panelRefs = useRef([]);
@@ -195,7 +196,7 @@ const AccordionGallery = ({
         height: vertical ? `${Math.round(height * 1.6)}px` : `${height}px`
       }}
       role="group"
-      aria-label="Image accordion gallery"
+      aria-label={ariaLabel}
     >
       {items.map((item, i) => {
         const isActive = i === active;
@@ -215,6 +216,7 @@ const AccordionGallery = ({
             tabIndex={0}
             aria-current={isActive ? 'true' : undefined}
             aria-label={item.label}
+            data-gallery-item-id={item.itemId}
           >
             <span className="ag-panel__frame">
               <span className="ag-panel__media" ref={el => (mediaRefs.current[i] = el)}>

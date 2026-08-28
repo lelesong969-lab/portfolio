@@ -13,24 +13,29 @@ test("HELLO keeps its integrated pressure interaction", async () => {
   assert.match(transition, /<TextPressure/);
 });
 
-test("FlowingMenu click expansion preserves modified links and delays routing", async () => {
-  const menu = await read("src/components/FlowingMenu/FlowingMenu.tsx");
-  assert.match(menu, /isModifiedClick/);
-  assert.match(menu, /event\.preventDefault\(\)/);
-  assert.match(menu, /flowing-menu__route-transition/);
-  assert.match(menu, /height:\s*window\.innerHeight/);
-  assert.match(menu, /navigateAt = mobile \? \.38 : \.68/);
-  assert.match(menu, /flowing-menu--opening/);
+test("AccordionGallery expands inactive panels and only routes an already-active unmodified click", async () => {
+  const [gallery, section, app] = await Promise.all([
+    read("src/components/AccordionGallery.jsx"),
+    read("src/components/ProjectGallerySection.tsx"),
+    read("src/App.tsx"),
+  ]);
+  assert.match(gallery, /if \(i !== active\) \{[\s\S]*e\.preventDefault\(\);[\s\S]*setActive\(i\)/);
+  assert.match(section, /const isModifiedClick = event\.button !== 0 \|\| event\.metaKey \|\| event\.ctrlKey \|\| event\.shiftKey \|\| event\.altKey/);
+  assert.match(section, /if \(isModifiedClick\) \{[\s\S]*event\.stopPropagation\(\);[\s\S]*return;/);
+  assert.doesNotMatch(section, /if \(isModifiedClick\)[\s\S]{0,160}event\.preventDefault\(\)/);
+  assert.match(section, /event\.preventDefault\(\);[\s\S]*if \(wasActive\) onOpenProject\(projects\[index\]\)/);
+  assert.match(app, /#work \.ag-panel\[data-gallery-item-id="\$\{slug\}"\]/);
+  assert.match(app, /\.focus\(\{ preventScroll: true \}\)/);
 });
 
 test("mobile and reduced-motion project interactions remain direct and readable", async () => {
-  const [menu, styles] = await Promise.all([
-    read("src/components/FlowingMenu/FlowingMenu.tsx"),
-    read("src/components/FlowingMenu/FlowingMenu.css"),
+  const [gallery, styles] = await Promise.all([
+    read("src/components/AccordionGallery.jsx"),
+    read("src/components/AccordionGallery.css"),
   ]);
-  assert.match(menu, /\(hover: hover\) and \(pointer: fine\)/);
-  assert.match(menu, /prefers-reduced-motion: reduce/);
-  assert.match(styles, /@media \(max-width: 767px\)[\s\S]*flowing-menu__overlay[^}]*display:\s*none/);
-  assert.match(styles, /flowing-menu__mobile-image[^}]*display:\s*block/);
+  assert.match(gallery, /matchMedia\('\(prefers-reduced-motion: reduce\)'\)/);
+  assert.match(gallery, /const dur = animate && !prefersReduced \? duration : 0/);
+  assert.match(styles, /@media \(max-width: 520px\)[\s\S]*\.accordion-gallery[^}]*flex-direction:\s*column/);
+  assert.match(styles, /height:\s*clamp\(500px, 74vh, 620px\) !important/);
   assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
 });

@@ -185,7 +185,7 @@ function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(() => projectFromPath(window.location.pathname));
   const [closingPortal, setClosingPortal] = useState<HTMLElement | null>(null);
   const projectHeaderRef = useRef<HTMLElement>(null);
-  const lastProjectIndex = useRef<string | null>(null);
+  const lastProjectSlug = useRef<string | null>(null);
   const pendingLanguageRef = useRef<Language | null>(null);
   const committedLanguageRef = useRef<Language | null>(null);
   const captureClosingPortal = useCallback((node: HTMLElement | null) => setClosingPortal(node), []);
@@ -254,11 +254,11 @@ function App() {
     window.requestAnimationFrame(() => {
       const gallery = document.getElementById("work");
       if (gallery) window.scrollTo({ top: gallery.offsetTop, behavior: "instant" as ScrollBehavior });
-      const index = lastProjectIndex.current;
-      if (!index) return;
+      const slug = lastProjectSlug.current;
+      if (!slug) return;
       window.requestAnimationFrame(() => {
-        document.querySelector<HTMLElement>(`[data-project-index="${index}"] .flowing-menu__link`)?.focus({ preventScroll: true });
-        lastProjectIndex.current = null;
+        document.querySelector<HTMLElement>(`#work .ag-panel[data-gallery-item-id="${slug}"]`)?.focus({ preventScroll: true });
+        lastProjectSlug.current = null;
       });
     });
   }, []);
@@ -277,7 +277,7 @@ function App() {
       }
       setSelectedProject(nextProject);
       if (nextProject) window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior }));
-      else if (lastProjectIndex.current) {
+      else if (lastProjectSlug.current) {
         window.history.replaceState({}, "", "/#work");
         restoreGalleryPosition();
       }
@@ -287,7 +287,7 @@ function App() {
   }, [restoreGalleryPosition]);
 
   const openProject: OpenProject = useCallback((project) => {
-    lastProjectIndex.current = project.index;
+    lastProjectSlug.current = project.slug;
     document.documentElement.classList.add(projectRouteClass);
     document.body.classList.add(projectRouteClass);
     document.documentElement.style.backgroundColor = projectTheme.entryBackground;

@@ -14,14 +14,17 @@ test("hero montage remains decorative rather than a second project index", async
   assert.doesNotMatch(gallery, /href=|onOpenProject|\/projects\//);
 });
 
-test("old homepage project implementations contain no active code", async () => {
-  const [stack, evidence, editorial, stackStyles] = await Promise.all([
-    read("src/components/ProjectStackGallery.tsx"),
+test("the accordion is the only active homepage project implementation", async () => {
+  const [app, section, evidence, editorial, stackStyles] = await Promise.all([
+    read("src/App.tsx"),
+    read("src/components/ProjectGallerySection.tsx"),
     read("src/components/ProjectEvidenceTitle.tsx"),
     read("src/components/ProjectEditorialGrid.tsx"),
     read("src/components/ProjectStackGallery.css"),
   ]);
-  assert.match(stack, /FlowingMenu\/FlowingMenu/);
+  assert.match(section, /AccordionGallery/);
+  assert.doesNotMatch(app, /ProjectStackGallery|FlowingMenu/);
+  assert.doesNotMatch(section, /ProjectStackGallery|FlowingMenu/);
   assert.equal(evidence.trim(), "export {};");
   assert.equal(editorial.trim(), "export {};");
   assert.doesNotMatch(stackStyles, /project-stack-gallery__/);

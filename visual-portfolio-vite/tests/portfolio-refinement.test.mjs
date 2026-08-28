@@ -4,7 +4,7 @@ import test from "node:test";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("homepage keeps one linear project index and removes the header CTA", async () => {
+test("homepage keeps one ordered accordion project index and removes the header CTA", async () => {
   const [app, section] = await Promise.all([
     read("src/App.tsx"),
     read("src/components/ProjectGallerySection.tsx"),
@@ -15,10 +15,15 @@ test("homepage keeps one linear project index and removes the header CTA", async
   const contact = app.indexOf("<ClosingStarTransition");
   assert.ok(hello < about && about < work && work < contact);
   assert.doesNotMatch(app, /岗位沟通|header-cta/);
-  assert.equal((section.match(/<FlowingMenu/g) ?? []).length, 1);
+  assert.equal((section.match(/<AccordionGallery/g) ?? []).length, 1);
+  assert.match(section, /import AccordionGallery from "\.\/AccordionGallery\.jsx"/);
+  assert.match(section, /const galleryItems = projects\.map/);
+  assert.match(section, /image: project\.coverImage/);
+  assert.match(section, /link: project\.href/);
+  assert.match(section, /itemId: project\.slug/);
   assert.doesNotMatch(section, /ProjectStackGallery|SELECTED WORK|五种判断路径/);
-  assert.match(section, />MY PROJECTS</);
-  assert.match(section, />05 PROJECTS</);
+  assert.match(section, /"MY PROJECTS"/);
+  assert.match(section, /"05 PROJECTS"/);
 });
 
 test("About keeps its manually timed, layered entrance", async () => {
@@ -42,29 +47,24 @@ test("About keeps its manually timed, layered entrance", async () => {
   assert.match(styles, /about-intro__block[^}]*visibility:\s*visible/s);
 });
 
-test("custom FlowingMenu uses semantic routes, edge overlays, and a calm marquee", async () => {
-  const [menu, styles] = await Promise.all([
-    read("src/components/FlowingMenu/FlowingMenu.tsx"),
-    read("src/components/FlowingMenu/FlowingMenu.css"),
+test("AccordionGallery uses semantic routes, stable item ids, and the accepted visual configuration", async () => {
+  const [gallery, section, styles] = await Promise.all([
+    read("src/components/AccordionGallery.jsx"),
+    read("src/components/ProjectGallerySection.tsx"),
+    read("src/components/AccordionGallery.css"),
   ]);
-  assert.match(menu, /const MARQUEE_SECONDS = 21/);
-  assert.match(menu, /Math\.ceil\(\(viewportWidth \* 2\.2\) \/ partWidth\) \+ 2/);
-  assert.match(menu, /Math\.max\(4, requiredCopies\)/);
-  assert.match(menu, /href=\{project\.href\}/);
-  assert.match(menu, /key=\{project\.slug\}/);
-  assert.match(menu, /onPointerEnter/);
-  assert.match(menu, /onPointerLeave/);
-  assert.doesNotMatch(menu, /onMouseEnter|onMouseLeave|xPercent/);
-  assert.match(menu, /onFocus/);
-  assert.match(menu, /onBlur/);
-  assert.match(menu, /x:\s*-partWidth/);
-  assert.match(menu, /duration:\s*MARQUEE_SECONDS/);
-  assert.match(styles, /flowing-menu__overlay[^}]*pointer-events:\s*none/s);
-  assert.match(styles, /flowing-menu__marquee-track[^}]*width:\s*max-content/s);
-  assert.match(styles, /flowing-menu__segment[^}]*flex:\s*0 0 auto/s);
-  assert.match(styles, /border-radius:\s*12px/);
-  assert.match(styles, /outline:\s*2px solid currentColor/);
-  assert.match(styles, /background:\s*#20201e/);
+  assert.match(gallery, /href=\{item\.link \|\| undefined\}/);
+  assert.match(gallery, /data-gallery-item-id=\{item\.itemId\}/);
+  assert.match(gallery, /aria-label=\{ariaLabel\}/);
+  assert.match(gallery, /onMouseEnter=\{\(\) => handleEnter\(i\)\}/);
+  assert.match(gallery, /onFocus=\{\(\) => setActive\(i\)\}/);
+  assert.match(section, /defaultIndex=\{2\}/);
+  assert.match(section, /accentColor="#8fc79d"/);
+  assert.match(section, /overlayColor="#11110f"/);
+  assert.match(section, /expandRatio=\{0\.52\}/);
+  assert.match(section, /trigger="hover"/);
+  assert.match(styles, /\.ag-panel:focus-visible/);
+  assert.match(styles, /background:\s*#0a0713/);
 });
 
 test("exactly five real projects expose routes, three-chapter evidence data, and source notes", async () => {
