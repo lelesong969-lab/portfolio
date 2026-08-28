@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './PixelSwap.css';
 
 // Every pixel is a window onto its own copy of the incoming content, so the
@@ -232,7 +232,7 @@ function PixelSwap({
     setTransition({ to: desiredActive, grid: gridRef.current });
   }, [desiredActive, shownActive, transition]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!transition) return;
     const settings = configRef.current;
     const { grid: frozenGrid, to } = transition;
