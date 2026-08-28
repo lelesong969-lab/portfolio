@@ -170,7 +170,10 @@ const AccordionGallery = ({
   };
 
   const handleKeyDown = (i, e) => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (i !== active) setActive(i);
+    } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault();
       setActive((i + 1) % count);
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
