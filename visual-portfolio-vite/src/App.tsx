@@ -4,6 +4,7 @@ import CircularGallery from "./components/CircularGallery";
 import ClosingStarTransition from "./components/ClosingStarTransition";
 import FinalContentSection from "./components/FinalContentSection";
 import GlassSurface from "./components/GlassSurface.jsx";
+import LanguagePixelTransition from "./components/LanguagePixelTransition";
 import OpeningAnimation from "./components/OpeningAnimation";
 import PositioningMark from "./components/PositioningMark";
 import ProjectGallerySection from "./components/ProjectGallerySection";
@@ -180,10 +181,13 @@ function PosterHero({ language, onLanguageChange }: { language: Language; onLang
 
 function App() {
   const [language, setLanguage] = useState<Language>(readSessionLanguage);
+  const [pendingLanguage, setPendingLanguage] = useState<Language | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(() => projectFromPath(window.location.pathname));
   const [closingPortal, setClosingPortal] = useState<HTMLElement | null>(null);
   const projectHeaderRef = useRef<HTMLElement>(null);
   const lastProjectIndex = useRef<string | null>(null);
+  const pendingLanguageRef = useRef<Language | null>(null);
+  const committedLanguageRef = useRef<Language | null>(null);
   const captureClosingPortal = useCallback((node: HTMLElement | null) => setClosingPortal(node), []);
 
   useEffect(() => {
@@ -209,6 +213,42 @@ function App() {
     document.title = title;
     document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute("content", description);
   }, [language, selectedProject]);
+
+  useEffect(() => {
+    if (pendingLanguage === null) return;
+
+    const previousBusyState = document.body.getAttribute("aria-busy");
+    document.body.setAttribute("aria-busy", "true");
+
+    return () => {
+      if (previousBusyState === null) document.body.removeAttribute("aria-busy");
+      else document.body.setAttribute("aria-busy", previousBusyState);
+    };
+  }, [pendingLanguage]);
+
+  const requestLanguageChange = useCallback((nextLanguage: Language) => {
+    if (nextLanguage === language || pendingLanguageRef.current !== null) return;
+
+    pendingLanguageRef.current = nextLanguage;
+    committedLanguageRef.current = null;
+    setPendingLanguage(nextLanguage);
+  }, [language]);
+
+  const commitLanguageChange = useCallback((nextLanguage: Language) => {
+    if (
+      pendingLanguageRef.current !== nextLanguage
+      || committedLanguageRef.current === nextLanguage
+    ) return;
+
+    committedLanguageRef.current = nextLanguage;
+    setLanguage(nextLanguage);
+  }, []);
+
+  const finishLanguageChange = useCallback(() => {
+    pendingLanguageRef.current = null;
+    committedLanguageRef.current = null;
+    setPendingLanguage(null);
+  }, []);
 
   const restoreGalleryPosition = useCallback(() => {
     window.requestAnimationFrame(() => {
@@ -270,15 +310,24 @@ function App() {
     restoreGalleryPosition();
   }, [restoreGalleryPosition]);
 
+  const languageTransition = (
+    <LanguagePixelTransition
+      targetLanguage={pendingLanguage}
+      onCovered={commitLanguageChange}
+      onFinish={finishLanguageChange}
+    />
+  );
+
   if (selectedProject) {
     const projectIndex = projects.findIndex((project) => project.slug === selectedProject.slug);
     const nextProject = projects[projectIndex + 1];
     return (
       <>
-        <SiteHeader headerRef={projectHeaderRef} language={language} onLanguageChange={setLanguage} variant="project" />
+        <SiteHeader headerRef={projectHeaderRef} language={language} onLanguageChange={requestLanguageChange} variant="project" />
         <Suspense fallback={null}>
           <ProjectCaseStudy project={selectedProject} nextProject={nextProject} onClose={closeProject} onOpenProject={openProject} language={language} />
         </Suspense>
+        {languageTransition}
       </>
     );
   }
@@ -288,7 +337,7 @@ function App() {
       <a className="skip-link" href="#main-content">{language === "en" ? "Skip to main content" : "跳到主要内容"}</a>
 
       <main id="main-content">
-        <PosterHero language={language} onLanguageChange={setLanguage} />
+        <PosterHero language={language} onLanguageChange={requestLanguageChange} />
         <StarRevealTransition closingPortal={closingPortal} language={language} />
         <AboutIntroSection language={language} />
         <ProjectGallerySection projects={projects} onOpenProject={openProject} language={language} />
@@ -333,6 +382,7 @@ function App() {
           </footer>
         </FinalContentSection>
       </main>
+      {languageTransition}
     </div>
   );
 }
