@@ -297,6 +297,7 @@ img { display: block; max-width: 100%; }
 .project-gallery-section__header { position: relative; display: block; margin-bottom: clamp(28px, 3vw, 42px); }
 .project-gallery-section__header h2 { margin: 0; overflow: hidden; color: #181818; font: 500 clamp(4.6rem, 11.5vw, 12.25rem)/.76 var(--display); letter-spacing: -.085em; text-transform: uppercase; white-space: nowrap; will-change: transform, clip-path, opacity; }
 .project-gallery-section__header p { position: absolute; right: 0; bottom: .55em; margin: 0; padding-left: 1rem; background: #e9e4da; color: rgba(24, 24, 24, .56); font: 600 clamp(.62rem, .82vw, .78rem)/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; will-change: transform, opacity; }
+.project-gallery-section__accordion { width: 100%; margin-top: clamp(.75rem, 1.5vw, 1.25rem); }
 .project-gallery-section__boundary {
   position: relative;
   z-index: 2;
