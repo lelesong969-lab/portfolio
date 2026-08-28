@@ -29,6 +29,7 @@ export default function LanguagePixelTransition({
 }: LanguagePixelTransitionProps) {
   const [isCovered, setIsCovered] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [coverRequestId, setCoverRequestId] = useState(0);
   const mountedRef = useRef(false);
   const cycleIdRef = useRef(0);
   const cycleRef = useRef<TransitionCycle | null>(null);
@@ -73,12 +74,7 @@ export default function LanguagePixelTransition({
       lockUnderlyingApp();
       setIsCovered(false);
       setIsMounted(true);
-      cancelFrame(coverFrameRef);
-      coverFrameRef.current = window.requestAnimationFrame(() => {
-        coverFrameRef.current = null;
-        if (!mountedRef.current || cycleRef.current?.id !== id) return;
-        setIsCovered(true);
-      });
+      setCoverRequestId(id);
     },
     [lockUnderlyingApp],
   );
@@ -95,6 +91,20 @@ export default function LanguagePixelTransition({
       unlockUnderlyingApp();
     };
   }, [unlockUnderlyingApp]);
+
+  useEffect(() => {
+    if (!isMounted || coverRequestId === 0) return;
+
+    const id = coverRequestId;
+    cancelFrame(coverFrameRef);
+    coverFrameRef.current = window.requestAnimationFrame(() => {
+      coverFrameRef.current = null;
+      if (!mountedRef.current || cycleRef.current?.id !== id) return;
+      setIsCovered(true);
+    });
+
+    return () => cancelFrame(coverFrameRef);
+  }, [coverRequestId, isMounted]);
 
   useEffect(() => {
     if (targetLanguage === null) {

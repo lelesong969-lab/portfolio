@@ -75,6 +75,16 @@ test("language changes use a full-screen cover, commit, and uncover cycle", asyn
   assert.match(styles, /#f1ede5[\s\S]*#11110f[\s\S]*#8fc79d/);
 });
 
+test("the language curtain mounts inactive before the first cover starts", async () => {
+  const transition = await read("src/components/LanguagePixelTransition.tsx");
+  const beginCycle = transition.match(/const beginCycle = useCallback\([\s\S]*?\n  \);/)?.[0] ?? "";
+
+  assert.match(transition, /const \[coverRequestId, setCoverRequestId\] = useState\(0\)/);
+  assert.match(beginCycle, /setIsCovered\(false\)[\s\S]*setIsMounted\(true\)[\s\S]*setCoverRequestId\(id\)/);
+  assert.doesNotMatch(beginCycle, /requestAnimationFrame/);
+  assert.match(transition, /useEffect\(\(\) => \{[\s\S]*if \(!isMounted[\s\S]*requestAnimationFrame[\s\S]*setIsCovered\(true\)/);
+});
+
 test("the bilingual mobile header does not force a 320px page width", async () => {
   const styles = await read("src/styles.css");
   assert.doesNotMatch(styles, /body\s*\{[^}]*min-width:\s*320px/s);
