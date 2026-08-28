@@ -424,7 +424,7 @@ function PixelSwap({
       {renderLayer(secondContent, 1)}
 
       {transition && (
-        <div className="pixel-swap__grid" aria-hidden="true" inert="">
+        <div className="pixel-swap__grid" aria-hidden="true" inert={true}>
           {transition.grid.pixels.map((pixel, index) => (
             <div
               key={pixel.id}
