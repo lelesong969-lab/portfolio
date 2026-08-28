@@ -3,6 +3,7 @@
 /.codex/
 /.superpowers/
 /.playwright-cli/
+/.worktrees/
 
 # Local-only project governance and internal planning
 /AGENTS.md
@@ -67,3 +68,4 @@ desktop.ini
 *.tmp
 *.bak
 *.log
+.gstack/
