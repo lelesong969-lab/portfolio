@@ -292,6 +292,8 @@ function App() {
       document.documentElement.classList.toggle(projectRouteClass, Boolean(nextProject));
       document.body.classList.toggle(projectRouteClass, Boolean(nextProject));
       if (nextProject) {
+        cancelGalleryRestore();
+        lastProjectSlug.current = nextProject.slug;
         document.documentElement.style.backgroundColor = projectTheme.entryBackground;
         document.body.style.backgroundColor = projectTheme.entryBackground;
       } else {
@@ -306,7 +308,7 @@ function App() {
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
+  }, [cancelGalleryRestore]);
 
   const openProject: OpenProject = useCallback((project) => {
     cancelGalleryRestore();
@@ -321,7 +323,7 @@ function App() {
     window.history.pushState({ portfolioProject: true }, "", project.href);
     setSelectedProject(project);
     window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior }));
-  }, []);
+  }, [cancelGalleryRestore]);
 
   const closeProject = useCallback(() => {
     window.history.replaceState({}, "", "/#work");
@@ -330,7 +332,7 @@ function App() {
     document.documentElement.style.removeProperty("background-color");
     document.body.style.removeProperty("background-color");
     setSelectedProject(null);
-  }, [cancelGalleryRestore]);
+  }, []);
 
   const languageTransition = (
     <LanguagePixelTransition

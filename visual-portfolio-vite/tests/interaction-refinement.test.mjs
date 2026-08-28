@@ -40,10 +40,12 @@ test("project close restores gallery focus only after the homepage remounts", as
 test("stale gallery restoration frames cannot clear a newer project target", async () => {
   const app = await read("src/App.tsx");
   const openProject = app.match(/const openProject: OpenProject = useCallback\([\s\S]*?\n  \}, \[[^\]]*\]\);/)?.[0] ?? "";
+  const popState = app.match(/const handlePopState = \(\) => \{[\s\S]*?\n    \};/)?.[0] ?? "";
 
   assert.match(app, /const cancelGalleryRestore = useCallback\([\s\S]*cancelAnimationFrame[\s\S]*\}, \[\]\)/);
   assert.match(app, /const slug = lastProjectSlug\.current;[\s\S]*if \(lastProjectSlug\.current === slug\) lastProjectSlug\.current = null/);
   assert.match(openProject, /cancelGalleryRestore\(\);[\s\S]*lastProjectSlug\.current = project\.slug/);
+  assert.match(popState, /if \(nextProject\) \{[\s\S]*cancelGalleryRestore\(\);[\s\S]*lastProjectSlug\.current = nextProject\.slug/);
 });
 
 test("mobile and reduced-motion project interactions remain direct and readable", async () => {
