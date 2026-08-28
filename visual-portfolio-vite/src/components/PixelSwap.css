@@ -6,6 +6,11 @@
   outline: none;
 }
 
+.pixel-swap:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
 .pixel-swap__layer {
   position: absolute;
   inset: 0;
@@ -33,4 +38,6 @@
 
 .pixel-swap__pixel-content {
   position: absolute;
+  pointer-events: none;
+  user-select: none;
 }

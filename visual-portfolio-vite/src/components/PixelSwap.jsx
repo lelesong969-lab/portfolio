@@ -37,6 +37,27 @@ const noise = seed => {
   return value - Math.floor(value);
 };
 
+const sanitizeClone = clone => {
+  clone.removeAttribute('id');
+  clone.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+
+  const interactiveSelector =
+    'a[href], area[href], button, input, select, textarea, [tabindex], [contenteditable], [autofocus]';
+  const interactiveElements = [
+    ...(clone.matches(interactiveSelector) ? [clone] : []),
+    ...clone.querySelectorAll(interactiveSelector)
+  ];
+
+  interactiveElements.forEach(element => {
+    element.setAttribute('tabindex', '-1');
+    element.removeAttribute('autofocus');
+
+    if (element.matches('a[href], area[href]')) element.removeAttribute('href');
+    if (element.matches('button, input, select, textarea')) element.setAttribute('disabled', '');
+    if (element.hasAttribute('contenteditable')) element.setAttribute('contenteditable', 'false');
+  });
+};
+
 const makeEasing = value => {
   const match = /cubic-bezier\(([^)]+)\)/.exec(value);
   const points = match ? match[1].split(',').map(Number) : EASINGS[value];
@@ -166,6 +187,7 @@ function PixelSwap({
   const [shownActive, setShownActive] = useState(active ?? initialActive);
   const [transition, setTransition] = useState(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
+  const [curtainPixelsReady, setCurtainPixelsReady] = useState(false);
 
   const containerRef = useRef(null);
   const layerRefs = useRef([]);
@@ -218,7 +240,13 @@ function PixelSwap({
   }, []);
 
   const stopAnimations = useCallback(() => {
-    animationsRef.current.forEach(animation => animation.cancel());
+    animationsRef.current.forEach(animation => {
+      try {
+        animation.cancel();
+      } catch {
+        // A failed animation should never block cleanup or transition completion.
+      }
+    });
     animationsRef.current = [];
     pixelRefs.current.forEach(pixel => pixel?.replaceChildren());
     if (timerRef.current) window.clearTimeout(timerRef.current);
@@ -240,6 +268,7 @@ function PixelSwap({
 
     const finish = () => {
       stopAnimations();
+      setCurtainPixelsReady(false);
       setShownActive(to);
       setTransition(null);
       settings.onComplete?.(to);
@@ -266,42 +295,59 @@ function PixelSwap({
       fade: settings.fade
     });
 
-    frozenGrid.pixels.forEach((pixel, index) => {
-      const pixelElement = pixelRefs.current[index];
-      if (!pixelElement) return;
+    try {
+      frozenGrid.pixels.forEach((pixel, index) => {
+        const pixelElement = pixelRefs.current[index];
+        if (!pixelElement || typeof pixelElement.animate !== 'function') {
+          throw new Error('Web Animations API is unavailable');
+        }
 
-      // Clone the rendered layer instead of re-rendering the content through
-      // React once per pixel: same visual result, a fraction of the cost.
-      const content = document.createElement('div');
-      content.className = 'pixel-swap__pixel-content';
-      content.style.left = `${-pixel.left}px`;
-      content.style.top = `${-pixel.top}px`;
-      content.style.width = `${frozenGrid.width}px`;
-      content.style.height = `${frozenGrid.height}px`;
-      // Counter-transform about the pixel's centre, not the content's, so the
-      // two transforms cancel to an exact identity at every frame.
-      const originX = pixel.left + frozenGrid.size / 2;
-      const originY = pixel.top + frozenGrid.size / 2;
-      content.style.transformOrigin = `${originX}px ${originY}px`;
+        // Clone the rendered layer instead of re-rendering the content through
+        // React once per pixel: same visual result, a fraction of the cost.
+        const content = document.createElement('div');
+        content.className = 'pixel-swap__pixel-content';
+        content.setAttribute('aria-hidden', 'true');
+        content.setAttribute('inert', '');
+        content.inert = true;
+        content.style.left = `${-pixel.left}px`;
+        content.style.top = `${-pixel.top}px`;
+        content.style.width = `${frozenGrid.width}px`;
+        content.style.height = `${frozenGrid.height}px`;
+        // Counter-transform about the pixel's centre, not the content's, so the
+        // two transforms cancel to an exact identity at every frame.
+        const originX = pixel.left + frozenGrid.size / 2;
+        const originY = pixel.top + frozenGrid.size / 2;
+        content.style.transformOrigin = `${originX}px ${originY}px`;
 
-      const clone = source.cloneNode(true);
-      clone.dataset.visible = 'true';
-      clone.removeAttribute('aria-hidden');
-      content.appendChild(clone);
-      pixelElement.replaceChildren(content);
+        const clone = source.cloneNode(true);
+        clone.dataset.visible = 'true';
+        clone.setAttribute('aria-hidden', 'true');
+        sanitizeClone(clone);
+        content.appendChild(clone);
+        pixelElement.replaceChildren(content);
 
-      const timing = {
-        duration: pixelMs,
-        delay: (isReverseCurtain ? 1 - pixel.offset : pixel.offset) * spread,
-        direction: isReverseCurtain ? 'reverse' : 'normal',
-        easing: 'linear',
-        fill: 'both'
-      };
-      animationsRef.current.push(
-        pixelElement.animate(keyframes.window, timing),
-        content.animate(keyframes.content, timing)
-      );
-    });
+        if (typeof content.animate !== 'function') throw new Error('Web Animations API is unavailable');
+
+        const timing = {
+          duration: pixelMs,
+          delay: (isReverseCurtain ? 1 - pixel.offset : pixel.offset) * spread,
+          direction: isReverseCurtain ? 'reverse' : 'normal',
+          easing: 'linear',
+          fill: 'both'
+        };
+        const windowAnimation = pixelElement.animate(keyframes.window, timing);
+        animationsRef.current.push(windowAnimation);
+        const contentAnimation = content.animate(keyframes.content, timing);
+        animationsRef.current.push(contentAnimation);
+      });
+    } catch {
+      finish();
+      return;
+    }
+
+    // Keep the opaque curtain base in place until every reverse pixel clone is
+    // installed; hiding it any earlier exposes the page for one passive-effect frame.
+    if (isReverseCurtain) setCurtainPixelsReady(true);
 
     timerRef.current = window.setTimeout(finish, total);
     return stopAnimations;
@@ -335,6 +381,7 @@ function PixelSwap({
             requestActive(!desiredActive);
           }
         },
+        'aria-pressed': desiredActive,
         role: 'button',
         tabIndex: 0
       };
@@ -345,7 +392,7 @@ function PixelSwap({
 
   const renderLayer = (content, index) => {
     const isShown = index === (shownActive ? 1 : 0);
-    const hideCurtainBase = reverseCurtain && index === 1;
+    const hideCurtainBase = reverseCurtain && curtainPixelsReady && index === 1;
     const isVisible = isShown && !(transition && index === incomingIndex) && !hideCurtainBase;
 
     return (
@@ -377,7 +424,7 @@ function PixelSwap({
       {renderLayer(secondContent, 1)}
 
       {transition && (
-        <div className="pixel-swap__grid" aria-hidden="true">
+        <div className="pixel-swap__grid" aria-hidden="true" inert="">
           {transition.grid.pixels.map((pixel, index) => (
             <div
               key={pixel.id}
