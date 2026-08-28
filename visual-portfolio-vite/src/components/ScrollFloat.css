@@ -1,0 +1,22 @@
+.scroll-float {
+  overflow: hidden;
+}
+
+.scroll-float__text {
+  display: inline-block;
+  font: inherit;
+  text-align: inherit;
+  line-height: inherit;
+}
+
+.scroll-float__char {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-float,
+  .scroll-float__char {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

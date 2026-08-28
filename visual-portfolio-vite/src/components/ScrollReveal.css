@@ -1,0 +1,22 @@
+.scroll-reveal {
+  margin: 0;
+  will-change: transform;
+}
+
+.scroll-reveal__text {
+  margin: 0;
+}
+
+.scroll-reveal__word {
+  display: inline-block;
+  will-change: opacity, filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .scroll-reveal__word {
+    filter: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
