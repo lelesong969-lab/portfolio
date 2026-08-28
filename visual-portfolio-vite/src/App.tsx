@@ -264,6 +264,11 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (selectedProject || !lastProjectSlug.current) return;
+    restoreGalleryPosition();
+  }, [selectedProject, restoreGalleryPosition]);
+
+  useEffect(() => {
     const handlePopState = () => {
       const nextProject = projectFromPath(window.location.pathname);
       document.documentElement.classList.toggle(projectRouteClass, Boolean(nextProject));
@@ -279,7 +284,6 @@ function App() {
       if (nextProject) window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior }));
       else if (lastProjectSlug.current) {
         window.history.replaceState({}, "", "/#work");
-        restoreGalleryPosition();
       }
     };
     window.addEventListener("popstate", handlePopState);
@@ -307,8 +311,7 @@ function App() {
     document.documentElement.style.removeProperty("background-color");
     document.body.style.removeProperty("background-color");
     setSelectedProject(null);
-    restoreGalleryPosition();
-  }, [restoreGalleryPosition]);
+  }, []);
 
   const languageTransition = (
     <LanguagePixelTransition

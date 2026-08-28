@@ -28,6 +28,14 @@ test("AccordionGallery expands inactive panels and only routes an already-active
   assert.match(app, /\.focus\(\{ preventScroll: true \}\)/);
 });
 
+test("project close restores gallery focus only after the homepage remounts", async () => {
+  const app = await read("src/App.tsx");
+  const closeProject = app.match(/const closeProject = useCallback\([\s\S]*?\n  \}, \[[^\]]*\]\);/)?.[0] ?? "";
+
+  assert.match(app, /useEffect\(\(\) => \{\s*if \(selectedProject \|\| !lastProjectSlug\.current\) return;\s*restoreGalleryPosition\(\);\s*\}, \[selectedProject, restoreGalleryPosition\]\);/);
+  assert.doesNotMatch(closeProject, /restoreGalleryPosition\(\)/);
+});
+
 test("mobile and reduced-motion project interactions remain direct and readable", async () => {
   const [gallery, styles] = await Promise.all([
     read("src/components/AccordionGallery.jsx"),
