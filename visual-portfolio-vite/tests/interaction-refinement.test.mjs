@@ -24,7 +24,8 @@ test("AccordionGallery expands inactive panels and only routes an already-active
   assert.match(section, /if \(isModifiedClick\) \{[\s\S]*event\.stopPropagation\(\);[\s\S]*return;/);
   assert.doesNotMatch(section, /if \(isModifiedClick\)[\s\S]{0,160}event\.preventDefault\(\)/);
   assert.match(section, /event\.preventDefault\(\);[\s\S]*if \(wasActive\) onOpenProject\(projects\[index\]\)/);
-  assert.match(app, /#work \.ag-panel\[data-gallery-item-id="\$\{slug\}"\]/);
+  assert.match(app, /querySelectorAll<HTMLElement>\("#work \.ag-panel"\)/);
+  assert.match(app, /panel\.dataset\.galleryItemId === slug/);
   assert.match(app, /\.focus\(\{ preventScroll: true \}\)/);
 });
 
@@ -34,6 +35,15 @@ test("project close restores gallery focus only after the homepage remounts", as
 
   assert.match(app, /useEffect\(\(\) => \{\s*if \(selectedProject \|\| !lastProjectSlug\.current\) return;\s*restoreGalleryPosition\(\);\s*\}, \[selectedProject, restoreGalleryPosition\]\);/);
   assert.doesNotMatch(closeProject, /restoreGalleryPosition\(\)/);
+});
+
+test("stale gallery restoration frames cannot clear a newer project target", async () => {
+  const app = await read("src/App.tsx");
+  const openProject = app.match(/const openProject: OpenProject = useCallback\([\s\S]*?\n  \}, \[[^\]]*\]\);/)?.[0] ?? "";
+
+  assert.match(app, /const cancelGalleryRestore = useCallback\([\s\S]*cancelAnimationFrame[\s\S]*\}, \[\]\)/);
+  assert.match(app, /const slug = lastProjectSlug\.current;[\s\S]*if \(lastProjectSlug\.current === slug\) lastProjectSlug\.current = null/);
+  assert.match(openProject, /cancelGalleryRestore\(\);[\s\S]*lastProjectSlug\.current = project\.slug/);
 });
 
 test("mobile and reduced-motion project interactions remain direct and readable", async () => {

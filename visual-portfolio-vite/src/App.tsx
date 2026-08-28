@@ -186,6 +186,8 @@ function App() {
   const [closingPortal, setClosingPortal] = useState<HTMLElement | null>(null);
   const projectHeaderRef = useRef<HTMLElement>(null);
   const lastProjectSlug = useRef<string | null>(null);
+  const galleryScrollFrameRef = useRef<number | null>(null);
+  const galleryFocusFrameRef = useRef<number | null>(null);
   const pendingLanguageRef = useRef<Language | null>(null);
   const committedLanguageRef = useRef<Language | null>(null);
   const captureClosingPortal = useCallback((node: HTMLElement | null) => setClosingPortal(node), []);
@@ -250,18 +252,34 @@ function App() {
     setPendingLanguage(null);
   }, []);
 
+  const cancelGalleryRestore = useCallback(() => {
+    if (galleryScrollFrameRef.current !== null) window.cancelAnimationFrame(galleryScrollFrameRef.current);
+    if (galleryFocusFrameRef.current !== null) window.cancelAnimationFrame(galleryFocusFrameRef.current);
+    galleryScrollFrameRef.current = null;
+    galleryFocusFrameRef.current = null;
+  }, []);
+
   const restoreGalleryPosition = useCallback(() => {
-    window.requestAnimationFrame(() => {
+    cancelGalleryRestore();
+    const slug = lastProjectSlug.current;
+    if (!slug) return;
+
+    galleryScrollFrameRef.current = window.requestAnimationFrame(() => {
+      galleryScrollFrameRef.current = null;
       const gallery = document.getElementById("work");
       if (gallery) window.scrollTo({ top: gallery.offsetTop, behavior: "instant" as ScrollBehavior });
-      const slug = lastProjectSlug.current;
-      if (!slug) return;
-      window.requestAnimationFrame(() => {
-        document.querySelector<HTMLElement>(`#work .ag-panel[data-gallery-item-id="${slug}"]`)?.focus({ preventScroll: true });
-        lastProjectSlug.current = null;
+      galleryFocusFrameRef.current = window.requestAnimationFrame(() => {
+        galleryFocusFrameRef.current = null;
+        if (lastProjectSlug.current !== slug) return;
+        Array.from(document.querySelectorAll<HTMLElement>("#work .ag-panel"))
+          .find((panel) => panel.dataset.galleryItemId === slug)
+          ?.focus({ preventScroll: true });
+        if (lastProjectSlug.current === slug) lastProjectSlug.current = null;
       });
     });
-  }, []);
+  }, [cancelGalleryRestore]);
+
+  useEffect(() => () => cancelGalleryRestore(), [cancelGalleryRestore]);
 
   useEffect(() => {
     if (selectedProject || !lastProjectSlug.current) return;
@@ -288,9 +306,10 @@ function App() {
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [restoreGalleryPosition]);
+  }, []);
 
   const openProject: OpenProject = useCallback((project) => {
+    cancelGalleryRestore();
     lastProjectSlug.current = project.slug;
     document.documentElement.classList.add(projectRouteClass);
     document.body.classList.add(projectRouteClass);
@@ -311,7 +330,7 @@ function App() {
     document.documentElement.style.removeProperty("background-color");
     document.body.style.removeProperty("background-color");
     setSelectedProject(null);
-  }, []);
+  }, [cancelGalleryRestore]);
 
   const languageTransition = (
     <LanguagePixelTransition
