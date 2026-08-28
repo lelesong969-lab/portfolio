@@ -109,8 +109,8 @@ export default function LanguagePixelTransition({
       // the current cycle always finishes before another one can begin.
       if (!currentCycle.covered) {
         currentCycle.target = targetLanguage;
-      } else if (targetLanguage !== currentCycle.target) {
-        queuedTargetRef.current = targetLanguage;
+      } else {
+        queuedTargetRef.current = targetLanguage === currentCycle.target ? null : targetLanguage;
       }
       return;
     }
