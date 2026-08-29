@@ -43,9 +43,11 @@ export default function AboutIntroSection({ language }: { language: Language }) 
     let frameId = 0;
     let lastTime = performance.now();
     let disposed = false;
+    let shouldRender = false;
 
     const render = (time: number) => {
-      if (disposed) return;
+      frameId = 0;
+      if (disposed || !shouldRender || document.hidden) return;
       const rect = section.getBoundingClientRect();
       const triggerLine = window.innerHeight * .68;
       targetProgress = clamp((triggerLine - rect.top) / Math.max(1, rect.height + triggerLine));
@@ -89,11 +91,36 @@ export default function AboutIntroSection({ language }: { language: Language }) 
       frameId = window.requestAnimationFrame(render);
     };
 
-    frameId = window.requestAnimationFrame(render);
+    const start = () => {
+      if (disposed || frameId || !shouldRender || document.hidden) return;
+      lastTime = performance.now();
+      frameId = window.requestAnimationFrame(render);
+    };
+
+    const stop = () => {
+      if (!frameId) return;
+      window.cancelAnimationFrame(frameId);
+      frameId = 0;
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      shouldRender = entry.isIntersecting;
+      if (shouldRender) start();
+      else stop();
+    }, { rootMargin: "100% 0px", threshold: 0 });
+    observer.observe(section);
+
+    const handleVisibility = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       disposed = true;
-      window.cancelAnimationFrame(frameId);
+      stop();
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibility);
       gsap.killTweensOf(blocks);
     };
   }, []);
@@ -152,7 +179,7 @@ export default function AboutIntroSection({ language }: { language: Language }) 
         </div>
 
         <figure ref={portraitRef} className="about-intro__portrait">
-          <img src="/media/leyang-portrait.png" alt={copy.portraitAlt} loading="lazy" decoding="async" />
+          <img src="/media/leyang-portrait.webp" alt={copy.portraitAlt} loading="lazy" decoding="async" />
         </figure>
 
         <div ref={researchRef} className="about-intro__block about-intro__block--research" data-side="left">

@@ -66,10 +66,11 @@ export default function TextPressure({
   const spansRef = useRef<(HTMLSpanElement | null)[]>([]);
   const mouseRef = useRef({ x: 0, y: 0 });
   const cursorRef = useRef({ x: 0, y: 0 });
-  const visibleRef = useRef(false);
   const [fontSize, setFontSize] = useState(minFontSize);
   const [scaleY, setScaleY] = useState(1);
   const [lineHeight, setLineHeight] = useState(1);
+  const [isActive, setIsActive] = useState(false);
+  const [fontRequested, setFontRequested] = useState(false);
   const characters = useMemo(() => text.split(""), [text]);
 
   useEffect(() => {
@@ -130,7 +131,7 @@ export default function TextPressure({
     const container = containerRef.current;
     if (!container) return;
     const observer = new IntersectionObserver(([entry]) => {
-      visibleRef.current = entry.isIntersecting;
+      setIsActive(entry.isIntersecting);
       if (entry.isIntersecting) window.requestAnimationFrame(setSize);
     }, { threshold: .05 });
     observer.observe(container);
@@ -138,39 +139,50 @@ export default function TextPressure({
   }, [setSize]);
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container || fontRequested) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setFontRequested(true);
+      observer.disconnect();
+    }, { rootMargin: "1400px 0px", threshold: 0 });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [fontRequested]);
+
+  useEffect(() => {
+    if (!isActive) return;
     let frameId = 0;
     const animate = () => {
-      if (visibleRef.current) {
-        mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
-        mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
-        const title = titleRef.current;
-        if (title) {
-          const titleBounds = title.getBoundingClientRect();
-          const maximumDistance = titleBounds.width / 2;
-          spansRef.current.forEach((span) => {
-            if (!span) return;
-            const bounds = span.getBoundingClientRect();
-            const distance = dist(mouseRef.current, {
-              x: bounds.x + bounds.width / 2,
-              y: bounds.y + bounds.height / 2,
-            });
-            const widthValue = width ? Math.floor(getAttr(distance, maximumDistance, minWidth, maxWidth)) : 100;
-            const weightValue = weight ? Math.floor(getAttr(distance, maximumDistance, minWeight, maxWeight)) : 440;
-            const italicValue = italic ? getAttr(distance, maximumDistance, 0, maxItalic).toFixed(2) : "0";
-            const alphaValue = alpha ? getAttr(distance, maximumDistance, 0, 1).toFixed(2) : "1";
-            const fontVariationSettings = `'wght' ${weightValue}, 'wdth' ${widthValue}, 'ital' ${italicValue}`;
-            if (span.style.fontVariationSettings !== fontVariationSettings) {
-              span.style.fontVariationSettings = fontVariationSettings;
-            }
-            if (alpha) span.style.opacity = alphaValue;
+      mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
+      mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
+      const title = titleRef.current;
+      if (title) {
+        const titleBounds = title.getBoundingClientRect();
+        const maximumDistance = titleBounds.width / 2;
+        spansRef.current.forEach((span) => {
+          if (!span) return;
+          const bounds = span.getBoundingClientRect();
+          const distance = dist(mouseRef.current, {
+            x: bounds.x + bounds.width / 2,
+            y: bounds.y + bounds.height / 2,
           });
-        }
+          const widthValue = width ? Math.floor(getAttr(distance, maximumDistance, minWidth, maxWidth)) : 100;
+          const weightValue = weight ? Math.floor(getAttr(distance, maximumDistance, minWeight, maxWeight)) : 440;
+          const italicValue = italic ? getAttr(distance, maximumDistance, 0, maxItalic).toFixed(2) : "0";
+          const alphaValue = alpha ? getAttr(distance, maximumDistance, 0, 1).toFixed(2) : "1";
+          const fontVariationSettings = `'wght' ${weightValue}, 'wdth' ${widthValue}, 'ital' ${italicValue}`;
+          if (span.style.fontVariationSettings !== fontVariationSettings) {
+            span.style.fontVariationSettings = fontVariationSettings;
+          }
+          if (alpha) span.style.opacity = alphaValue;
+        });
       }
       frameId = window.requestAnimationFrame(animate);
     };
-    animate();
+    frameId = window.requestAnimationFrame(animate);
     return () => window.cancelAnimationFrame(frameId);
-  }, [alpha, italic, maxItalic, maxWeight, maxWidth, minWeight, minWidth, weight, width]);
+  }, [alpha, isActive, italic, maxItalic, maxWeight, maxWidth, minWeight, minWidth, weight, width]);
 
   const fontImport = useMemo(() => (
     <style>{`@import url('${fontUrl}');`}</style>
@@ -184,7 +196,7 @@ export default function TextPressure({
 
   return (
     <div ref={containerRef} className="text-pressure">
-      {fontImport}
+      {fontRequested ? fontImport : null}
       <h2
         ref={titleRef}
         className={dynamicClassName}

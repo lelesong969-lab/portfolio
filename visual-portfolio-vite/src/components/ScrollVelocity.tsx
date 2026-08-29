@@ -42,7 +42,9 @@ function VelocityText({
 }: VelocityTextProps) {
   const copyRef = useRef<HTMLSpanElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(0);
   const [copyWidth, setCopyWidth] = useState(0);
+  const [isNearViewport, setIsNearViewport] = useState(false);
 
   useLayoutEffect(() => {
     const copy = copyRef.current;
@@ -55,15 +57,25 @@ function VelocityText({
   }, [children]);
 
   useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsNearViewport(entry.isIntersecting);
+    }, { rootMargin: "400px 0px", threshold: 0 });
+    observer.observe(scroller);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion || copyWidth === 0) return;
+    if (reducedMotion || copyWidth === 0 || !isNearViewport) return;
 
     const container = scrollContainerRef?.current;
     const getScrollPosition = () => container ? container.scrollTop : window.scrollY;
     let previousScroll = getScrollPosition();
     let previousTime = performance.now();
     let smoothVelocity = 0;
-    let offset = 0;
+    let offset = offsetRef.current;
     let direction = 1;
     let frameId = 0;
 
@@ -92,8 +104,11 @@ function VelocityText({
     };
 
     frameId = window.requestAnimationFrame(render);
-    return () => window.cancelAnimationFrame(frameId);
-  }, [baseVelocity, copyWidth, damping, scrollContainerRef, stiffness, velocityMapping]);
+    return () => {
+      offsetRef.current = offset;
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [baseVelocity, copyWidth, damping, isNearViewport, scrollContainerRef, stiffness, velocityMapping]);
 
   const spokenText = typeof children === "string" ? children.replace(/\s+/g, " ").trim() : undefined;
 

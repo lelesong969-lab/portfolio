@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: "Noto Sans SC Local";
-  src: url("/fonts/NotoSansSC-VF.ttf") format("truetype");
+  src: url("/fonts/NotoSansSC-Portfolio.woff2") format("woff2");
   font-display: swap;
   font-style: normal;
   font-weight: 100 900;
@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: "LXGW WenKai Local";
-  src: url("/fonts/LXGWWenKai-Regular.ttf") format("truetype");
+  src: url("/fonts/LXGWWenKai-Portfolio.woff2") format("woff2");
   font-display: swap;
   font-style: normal;
   font-weight: 400;
