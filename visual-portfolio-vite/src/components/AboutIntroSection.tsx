@@ -131,7 +131,7 @@ export default function AboutIntroSection({ language }: { language: Language }) 
       };
 
   return (
-    <section id="about" ref={sectionRef} className="about-intro" aria-labelledby="about-title">
+    <section id="about" ref={sectionRef} className="about-intro" data-language={language} aria-labelledby="about-title">
       <div className="about-intro__canvas">
         <div ref={identityRef} className="about-intro__block about-intro__block--identity" data-side="left">
           <p className="about-intro__eyebrow">{copy.eyebrow}</p>

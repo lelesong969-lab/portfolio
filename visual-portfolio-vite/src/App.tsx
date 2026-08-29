@@ -183,8 +183,8 @@ function SiteHeader({
           opacity={.8}
           blur={11}
           displace={15}
-          backgroundOpacity={0}
-          saturation={1}
+          backgroundOpacity={.18}
+          saturation={1.2}
           distortionScale={-150}
           redOffset={5}
           greenOffset={15}
@@ -204,8 +204,8 @@ function SiteHeader({
           opacity={.8}
           blur={11}
           displace={15}
-          backgroundOpacity={0}
-          saturation={1}
+          backgroundOpacity={.18}
+          saturation={1.2}
           distortionScale={-150}
           redOffset={5}
           greenOffset={15}
@@ -498,7 +498,7 @@ function App() {
                 ).map((line, index) => (
                   <ScrollFloat
                     as="span"
-                    containerClassName={index === 0 ? "contact-title__line" : "contact-title__line contact-title__line--accent"}
+                    containerClassName={`${index === 0 ? "contact-title__line" : "contact-title__line contact-title__line--accent"}${index === 1 ? " contact-title__line--phrase" : ""}`}
                     key={line}
                   >
                     {line}
