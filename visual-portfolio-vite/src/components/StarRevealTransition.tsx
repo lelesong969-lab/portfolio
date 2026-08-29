@@ -438,7 +438,7 @@ function StarRevealTransition({
     };
   }, [closingPortal, language]);
 
-  const welcomeWord = language === "en" ? "WELCOME" : "欢迎";
+  const welcomeWord = "WELCOME";
 
   return (
     <section className="star-portal" ref={portalRef} aria-label={language === "en" ? "Star transition from the welcome to the about section" : "首页与关于我之间的星形过渡"}>
@@ -473,7 +473,7 @@ function StarRevealTransition({
             ))}
           </h2>
           <div className="hero-welcome__copy">
-            <p className="hero-welcome__eyebrow">{language === "en" ? "A SMALL INTRODUCTION" : "简短介绍"}</p>
+            <p className="hero-welcome__eyebrow">A SMALL INTRODUCTION</p>
             <p>{language === "en"
               ? "Welcome to my portfolio. It shows how I synthesize research and project evidence, then turn signals into grounded product and business decisions."
               : "欢迎来到我的作品集。这里记录我如何整理研究与项目资料，把线索转化为清晰、可靠的产品与业务判断。"}</p>
@@ -482,7 +482,7 @@ function StarRevealTransition({
         <div id={titleId} className="intro-bridge__statement intro-bridge__statement--portal" ref={bridgeMainRef}>
           <div className="intro-bridge__pressure">
             <TextPressure
-              text={language === "en" ? "HELLO" : "你好"}
+              text="HELLO"
               flex
               alpha={false}
               stroke={false}

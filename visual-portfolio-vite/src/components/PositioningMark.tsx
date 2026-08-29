@@ -2,23 +2,21 @@ import type { Language } from "../language";
 
 type PositioningMarkProps = {
   language: Language;
-  text: string;
+  english: string;
+  chinese: string;
   className?: string;
 };
 
 function PositioningMark({
   language,
-  text,
+  english,
+  chinese,
   className = "",
 }: PositioningMarkProps) {
   return (
-    <div className={`positioning-mark ${className}`} role="group" aria-label={text}>
-      <p
-        className={language === "en" ? "positioning-mark__en" : "positioning-mark__cn"}
-        lang={language === "en" ? "en" : "zh-CN"}
-      >
-        {text}
-      </p>
+    <div className={`positioning-mark ${className}`} role="group" aria-label={language === "en" ? english : `${chinese} — ${english}`}>
+      {language === "zh" && <p className="positioning-mark__cn" lang="zh-CN">{chinese}</p>}
+      <p className="positioning-mark__en" lang="en">{english}</p>
     </div>
   );
 }

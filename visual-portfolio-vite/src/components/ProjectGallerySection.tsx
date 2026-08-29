@@ -62,8 +62,8 @@ export default function ProjectGallerySection({ projects, onOpenProject, languag
   }, []);
 
   const galleryItems = projects.map((project) => ({
-    image: project.coverImage,
-    label: language === "en" ? project.titleEn : project.titleZh,
+    image: project.previewImage ?? project.coverImage,
+    label: language === "en" ? project.titleEn : `${project.titleZh} / ${project.titleEn}`,
     alt: language === "en" ? project.detailEn.alt : project.alt,
     link: project.href,
     itemId: project.slug,
@@ -110,8 +110,8 @@ export default function ProjectGallerySection({ projects, onOpenProject, languag
       <BreathingWave className="project-gallery-section__entry-wave" />
       <div className="project-gallery-section__inner">
         <header className="project-gallery-section__header">
-          <h2 id="projects-title">{language === "en" ? "MY PROJECTS" : "项目一览"}</h2>
-          <p>{language === "en" ? "05 PROJECTS" : "05 个项目"}</p>
+          <h2 id="projects-title">MY PROJECTS</h2>
+          <p>{String(projects.length).padStart(2, "0")} PROJECTS</p>
         </header>
         <div
           className="project-gallery-section__accordion"

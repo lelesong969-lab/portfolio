@@ -1,10 +1,11 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { gsap } from "gsap";
 import AboutIntroSection from "./components/AboutIntroSection";
 import CircularGallery from "./components/CircularGallery";
 import ClosingStarTransition from "./components/ClosingStarTransition";
 import FinalContentSection from "./components/FinalContentSection";
 import GlassSurface from "./components/GlassSurface.jsx";
-import LanguagePixelTransition from "./components/LanguagePixelTransition";
+import LanguageEntranceTransition from "./components/LanguageEntranceTransition";
 import OpeningAnimation from "./components/OpeningAnimation";
 import PositioningMark from "./components/PositioningMark";
 import ProjectGallerySection from "./components/ProjectGallerySection";
@@ -34,28 +35,115 @@ const projectFromPath = (path: string) => {
   return match ? projects.find((project) => project.slug === match[1]) ?? null : null;
 };
 
+function LanguageOption({
+  label,
+  hoverLabel,
+  active,
+  lang,
+  onSelect,
+}: {
+  label: string;
+  hoverLabel: string;
+  active: boolean;
+  lang: string;
+  onSelect: () => void;
+}) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const circleRef = useRef<HTMLSpanElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const hoverLabelRef = useRef<HTMLSpanElement>(null);
+  const timelineRef = useRef<gsap.core.Timeline | null>(null);
+  const activeTweenRef = useRef<gsap.core.Tween | null>(null);
+  const reducedMotionRef = useRef(false);
+
+  useLayoutEffect(() => {
+    const button = buttonRef.current;
+    const circle = circleRef.current;
+    const primaryLabel = labelRef.current;
+    const secondaryLabel = hoverLabelRef.current;
+    if (!button || !circle || !primaryLabel || !secondaryLabel) return;
+
+    reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let cancelled = false;
+
+    const layout = () => {
+      if (cancelled) return;
+      const { width, height } = button.getBoundingClientRect();
+      const radius = ((width * width) / 4 + height * height) / (2 * height);
+      const diameter = Math.ceil(radius * 2) + 2;
+      const delta = Math.ceil(radius - Math.sqrt(Math.max(0, radius * radius - (width * width) / 4))) + 1;
+      const originY = diameter - delta;
+
+      circle.style.width = `${diameter}px`;
+      circle.style.height = `${diameter}px`;
+      circle.style.bottom = `-${delta}px`;
+
+      activeTweenRef.current?.kill();
+      timelineRef.current?.kill();
+      gsap.set(circle, { xPercent: -50, scale: 0, transformOrigin: `50% ${originY}px` });
+      gsap.set(primaryLabel, { y: 0, opacity: 1 });
+      gsap.set(secondaryLabel, { y: Math.ceil(height + 12), opacity: 0 });
+
+      timelineRef.current = gsap.timeline({ paused: true })
+        .to(circle, { scale: 1.2, xPercent: -50, duration: 1, ease: "power3.out", overwrite: "auto" }, 0)
+        .to(primaryLabel, { y: -(height + 8), opacity: 0, duration: 1, ease: "power3.out", overwrite: "auto" }, 0)
+        .to(secondaryLabel, { y: 0, opacity: 1, duration: 1, ease: "power3.out", overwrite: "auto" }, 0);
+    };
+
+    layout();
+    window.addEventListener("resize", layout);
+    void document.fonts?.ready.then(layout).catch(() => undefined);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("resize", layout);
+      activeTweenRef.current?.kill();
+      timelineRef.current?.kill();
+    };
+  }, [hoverLabel, label]);
+
+  const animateTo = (progress: 0 | 1) => {
+    const timeline = timelineRef.current;
+    if (!timeline) return;
+    activeTweenRef.current?.kill();
+    if (reducedMotionRef.current) {
+      timeline.progress(progress);
+      return;
+    }
+    activeTweenRef.current = timeline.tweenTo(progress === 1 ? timeline.duration() : 0, {
+      duration: progress === 1 ? .3 : .2,
+      ease: "power3.out",
+      overwrite: "auto",
+    });
+  };
+
+  return (
+    <button
+      ref={buttonRef}
+      className={active ? "language-switch__option is-active" : "language-switch__option"}
+      type="button"
+      aria-pressed={active}
+      onClick={onSelect}
+      onMouseEnter={() => animateTo(1)}
+      onMouseLeave={() => animateTo(0)}
+      onFocus={() => animateTo(1)}
+      onBlur={() => animateTo(0)}
+      lang={lang}
+    >
+      <span ref={circleRef} className="language-switch__hover-circle" aria-hidden="true" />
+      <span className="language-switch__label-stack">
+        <span ref={labelRef} className="language-switch__label">{label}</span>
+        <span ref={hoverLabelRef} className="language-switch__label language-switch__label--hover" aria-hidden="true">{hoverLabel}</span>
+      </span>
+    </button>
+  );
+}
+
 function LanguageSwitch({ language, onChange }: { language: Language; onChange: (language: Language) => void }) {
   return (
-    <div className="language-switch" role="group" aria-label={language === "en" ? "Choose language" : "选择语言"}>
-      <button
-        className={language === "en" ? "language-switch__option is-active" : "language-switch__option"}
-        type="button"
-        aria-pressed={language === "en"}
-        onClick={() => onChange("en")}
-        lang="en"
-      >
-        EN
-      </button>
+    <div className="language-switch" role="group" aria-label={language === "en" ? "Choose English or bilingual Chinese" : "选择纯英文或中英双语版本"}>
+      <LanguageOption label="EN" hoverLabel="ENGLISH" active={language === "en"} lang="en" onSelect={() => onChange("en")} />
       <span className="language-switch__divider" aria-hidden="true">/</span>
-      <button
-        className={language === "zh" ? "language-switch__option is-active" : "language-switch__option"}
-        type="button"
-        aria-pressed={language === "zh"}
-        onClick={() => onChange("zh")}
-        lang="zh-CN"
-      >
-        中文
-      </button>
+      <LanguageOption label="中文" hoverLabel="中英双语" active={language === "zh"} lang="zh-CN" onSelect={() => onChange("zh")} />
     </div>
   );
 }
@@ -141,9 +229,8 @@ function PosterHero({ language, onLanguageChange }: { language: Language; onLang
     text: language === "en" ? project.titleEn : project.titleZh,
     previewLabel: language === "en" ? project.categoryEn : project.previewLabel,
   })), [language]);
-  const positioning = language === "en"
-    ? "DESIGN / TECHNOLOGY / DATA-INFORMED INNOVATION"
-    : "设计 / 科技 / 数据驱动创新";
+  const positioningEnglish = "DESIGN / TECHNOLOGY / DATA-INFORMED INNOVATION";
+  const positioningChinese = "设计 / 科技 / 数据驱动创新";
 
   return (
     <>
@@ -160,8 +247,8 @@ function PosterHero({ language, onLanguageChange }: { language: Language; onLang
             <h1 ref={finalTitleRef} id="poster-title" className="poster-hero__nameplate poster-hero__nameplate--final">LEYANG</h1>
           </div>
 
-          <div className="poster-hero__positioning" aria-label={positioning}>
-            <PositioningMark language={language} text={positioning} />
+          <div className="poster-hero__positioning">
+            <PositioningMark language={language} english={positioningEnglish} chinese={positioningChinese} />
           </div>
 
           <div className="poster-hero__gallery">
@@ -187,9 +274,11 @@ function App() {
   const projectHeaderRef = useRef<HTMLElement>(null);
   const lastProjectSlug = useRef<string | null>(null);
   const galleryScrollFrameRef = useRef<number | null>(null);
+  const galleryScrollTimeoutRef = useRef<number | null>(null);
   const galleryFocusFrameRef = useRef<number | null>(null);
   const pendingLanguageRef = useRef<Language | null>(null);
   const committedLanguageRef = useRef<Language | null>(null);
+  const languageHashRef = useRef<{ hash: string; top: number } | null>(null);
   const captureClosingPortal = useCallback((node: HTMLElement | null) => setClosingPortal(node), []);
 
   useEffect(() => {
@@ -228,11 +317,28 @@ function App() {
     };
   }, [pendingLanguage]);
 
+  useLayoutEffect(() => {
+    if (!languageHashRef.current) return;
+
+    const { hash, top } = languageHashRef.current;
+    if (!hash.startsWith("#")) {
+      languageHashRef.current = null;
+      return;
+    }
+
+    languageHashRef.current = null;
+    const anchor = document.getElementById(hash.slice(1));
+    if (anchor) window.scrollTo({ top: anchor.offsetTop - top, behavior: "instant" as ScrollBehavior });
+  }, [language]);
+
   const requestLanguageChange = useCallback((nextLanguage: Language) => {
     if (nextLanguage === language || pendingLanguageRef.current !== null) return;
 
     pendingLanguageRef.current = nextLanguage;
     committedLanguageRef.current = null;
+    const currentHash = window.location.hash;
+    const currentAnchor = currentHash ? document.getElementById(currentHash.slice(1)) : null;
+    languageHashRef.current = currentAnchor ? { hash: currentHash, top: currentAnchor.getBoundingClientRect().top } : null;
     setPendingLanguage(nextLanguage);
   }, [language]);
 
@@ -254,8 +360,10 @@ function App() {
 
   const cancelGalleryRestore = useCallback(() => {
     if (galleryScrollFrameRef.current !== null) window.cancelAnimationFrame(galleryScrollFrameRef.current);
+    if (galleryScrollTimeoutRef.current !== null) window.clearTimeout(galleryScrollTimeoutRef.current);
     if (galleryFocusFrameRef.current !== null) window.cancelAnimationFrame(galleryFocusFrameRef.current);
     galleryScrollFrameRef.current = null;
+    galleryScrollTimeoutRef.current = null;
     galleryFocusFrameRef.current = null;
   }, []);
 
@@ -266,16 +374,24 @@ function App() {
 
     galleryScrollFrameRef.current = window.requestAnimationFrame(() => {
       galleryScrollFrameRef.current = null;
-      const gallery = document.getElementById("work");
-      if (gallery) window.scrollTo({ top: gallery.offsetTop, behavior: "instant" as ScrollBehavior });
-      galleryFocusFrameRef.current = window.requestAnimationFrame(() => {
-        galleryFocusFrameRef.current = null;
+      const scrollToGallery = () => {
+        const gallery = document.getElementById("work");
+        if (gallery) window.scrollTo({ top: gallery.offsetTop, behavior: "instant" as ScrollBehavior });
+      };
+      scrollToGallery();
+      galleryScrollTimeoutRef.current = window.setTimeout(() => {
+        galleryScrollTimeoutRef.current = null;
         if (lastProjectSlug.current !== slug) return;
-        Array.from(document.querySelectorAll<HTMLElement>("#work .ag-panel"))
-          .find((panel) => panel.dataset.galleryItemId === slug)
-          ?.focus({ preventScroll: true });
-        if (lastProjectSlug.current === slug) lastProjectSlug.current = null;
-      });
+        scrollToGallery();
+        galleryFocusFrameRef.current = window.requestAnimationFrame(() => {
+          galleryFocusFrameRef.current = null;
+          if (lastProjectSlug.current !== slug) return;
+          Array.from(document.querySelectorAll<HTMLElement>("#work .ag-panel"))
+            .find((panel) => panel.dataset.galleryItemId === slug)
+            ?.focus({ preventScroll: true });
+          if (lastProjectSlug.current === slug) lastProjectSlug.current = null;
+        });
+      }, 96);
     });
   }, [cancelGalleryRestore]);
 
@@ -326,16 +442,17 @@ function App() {
   }, [cancelGalleryRestore]);
 
   const closeProject = useCallback(() => {
+    if (selectedProject) lastProjectSlug.current = selectedProject.slug;
     window.history.replaceState({}, "", "/#work");
     document.documentElement.classList.remove(projectRouteClass);
     document.body.classList.remove(projectRouteClass);
     document.documentElement.style.removeProperty("background-color");
     document.body.style.removeProperty("background-color");
     setSelectedProject(null);
-  }, []);
+  }, [selectedProject]);
 
   const languageTransition = (
-    <LanguagePixelTransition
+    <LanguageEntranceTransition
       targetLanguage={pendingLanguage}
       onCovered={commitLanguageChange}
       onFinish={finishLanguageChange}
@@ -344,12 +461,12 @@ function App() {
 
   if (selectedProject) {
     const projectIndex = projects.findIndex((project) => project.slug === selectedProject.slug);
-    const nextProject = projects[projectIndex + 1];
+    const nextProject = projects[(projectIndex + 1) % projects.length];
     return (
       <>
         <SiteHeader headerRef={projectHeaderRef} language={language} onLanguageChange={requestLanguageChange} variant="project" />
         <Suspense fallback={null}>
-          <ProjectCaseStudy project={selectedProject} nextProject={nextProject} onClose={closeProject} onOpenProject={openProject} language={language} />
+          <ProjectCaseStudy project={selectedProject} nextProject={nextProject} projects={projects} onClose={closeProject} onOpenProject={openProject} language={language} />
         </Suspense>
         {languageTransition}
       </>
@@ -369,7 +486,7 @@ function App() {
         <ClosingStarTransition portalRef={captureClosingPortal} />
         <FinalContentSection>
           <div className="contact section-shell">
-            <p className="eyebrow final-content__content-left">{language === "en" ? "C / START A CONVERSATION" : "C / 开始交流"}</p>
+            <p className="eyebrow final-content__content-left">{language === "en" ? "C / START A CONVERSATION" : "C / Start a conversation"}</p>
             <div className="contact__topbar">
               <a className="button button--dark contact__top-link" href="#top">↑ {language === "en" ? "BACK TO TOP" : "回到顶部"}</a>
             </div>
@@ -401,8 +518,8 @@ function App() {
           </div>
           <footer className="site-footer section-shell final-content__content-right">
             <a className="brand-mark" href="#top" aria-label={language === "en" ? "Return to the page top" : "返回页面顶部"}>LS<span>.</span></a>
-            <p>© {new Date().getFullYear()} Leyang Song. {language === "en" ? "Interdisciplinary portfolio." : "跨学科作品集。"}</p>
-            <p>{language === "en" ? "Design / Technology / Data-Informed Innovation" : "设计 / 科技 / 数据驱动创新"}</p>
+            <p>© {new Date().getFullYear()} Leyang Song. Interdisciplinary portfolio.</p>
+            <p>Design / Technology / Data-Informed Innovation</p>
           </footer>
         </FinalContentSection>
       </main>

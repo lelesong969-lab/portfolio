@@ -37,6 +37,7 @@
   .accordion-gallery { flex-direction: column; perspective: none; height: clamp(500px, 74vh, 620px) !important; }
   .ag-panel { min-height: 84px; transform: none !important; }
   .accordion-gallery .ag-panel__media { width: 100%; height: var(--ag-media-size); }
+  .ag-panel__text { min-width: 0; white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.15; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ag-panel, .ag-panel__media { will-change: auto; }

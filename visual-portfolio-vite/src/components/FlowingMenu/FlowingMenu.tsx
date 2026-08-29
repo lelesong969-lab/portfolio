@@ -375,7 +375,7 @@ export default function FlowingMenu({ projects, onOpenProject, language }: Flowi
 
       {routeTransition && (
         <div ref={transitionRef} className="flowing-menu__route-transition" aria-hidden="true">
-          <p className="flowing-menu__route-index">{routeTransition.project.index} / 05</p>
+          <p className="flowing-menu__route-index">{routeTransition.project.index} / {String(projects.length).padStart(2, "0")}</p>
           <h2 className="flowing-menu__route-title">{language === "en" ? routeTransition.project.titleEn : routeTransition.project.titleZh}</h2>
           <div className="flowing-menu__route-image">
             <img src={routeTransition.project.coverImage} alt="" />

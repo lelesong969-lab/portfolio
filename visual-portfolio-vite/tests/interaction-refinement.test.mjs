@@ -35,6 +35,8 @@ test("project close restores gallery focus only after the homepage remounts", as
 
   assert.match(app, /useEffect\(\(\) => \{\s*if \(selectedProject \|\| !lastProjectSlug\.current\) return;\s*restoreGalleryPosition\(\);\s*\}, \[selectedProject, restoreGalleryPosition\]\);/);
   assert.doesNotMatch(closeProject, /restoreGalleryPosition\(\)/);
+  assert.match(closeProject, /if \(selectedProject\) lastProjectSlug\.current = selectedProject\.slug/);
+  assert.match(app, /galleryScrollTimeoutRef[\s\S]*window\.setTimeout\([\s\S]*scrollToGallery\(\)[\s\S]*96\)/);
 });
 
 test("stale gallery restoration frames cannot clear a newer project target", async () => {
