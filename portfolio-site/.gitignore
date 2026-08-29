@@ -19,3 +19,5 @@ output/
 scripts/
 test-results/
 tsconfig.tsbuildinfo
+.vercel
+.env*
