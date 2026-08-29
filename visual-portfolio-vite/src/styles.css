@@ -455,7 +455,7 @@ img { display: block; max-width: 100%; }
     padding: 1.3rem .65rem .75rem;
   }
   .poster-hero__nameplate { font-size: clamp(2.7rem, 11.5vw, 4rem); }
-  .poster-hero__gallery { height: clamp(28rem, 112vw, 32rem); }
+  .poster-hero__gallery { height: clamp(38rem, 155vw, 46rem); }
   .poster-hero__footer { justify-content: center; }
   .poster-hero__footer p { display: none; }
 }

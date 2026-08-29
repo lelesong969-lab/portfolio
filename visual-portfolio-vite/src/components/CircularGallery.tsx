@@ -67,11 +67,13 @@ type GalleryCardStyle = CSSProperties & {
 };
 
 const CARD_COMPOSITION: CardComposition[] = [
-  { offset: 58, rotation: -3.4, scale: 0.9, float: 22, floatX: 9, floatRotation: 2.3, breath: 1.014, duration: 7.7, delay: -2.4, scrollX: -46, scrollY: 34, scrollRotation: -1.1 },
-  { offset: -44, rotation: 1.8, scale: 0.97, float: 16, floatX: 6, floatRotation: 1.5, breath: 1.01, duration: 6.3, delay: -4.9, scrollX: 34, scrollY: -38, scrollRotation: .8 },
-  { offset: 42, rotation: -0.9, scale: 1.02, float: 20, floatX: 5, floatRotation: 1.2, breath: 1.015, duration: 5.4, delay: -1.7, scrollX: -24, scrollY: 31, scrollRotation: -.55 },
-  { offset: -62, rotation: 3, scale: 0.97, float: 24, floatX: 10, floatRotation: 2.5, breath: 1.012, duration: 7.9, delay: -5.8, scrollX: 42, scrollY: -40, scrollRotation: 1 },
-  { offset: 54, rotation: -2.3, scale: 0.91, float: 18, floatX: 8, floatRotation: 1.9, breath: 1.013, duration: 6.9, delay: -3.5, scrollX: -38, scrollY: 35, scrollRotation: -.8 },
+  { offset: -26, rotation: -3.2, scale: 0.94, float: 18, floatX: 8, floatRotation: 2.1, breath: 1.014, duration: 7.7, delay: -2.4, scrollX: -34, scrollY: 24, scrollRotation: -.9 },
+  { offset: 18, rotation: 1.8, scale: 0.98, float: 16, floatX: 6, floatRotation: 1.5, breath: 1.01, duration: 6.3, delay: -4.9, scrollX: 26, scrollY: -26, scrollRotation: .7 },
+  { offset: -12, rotation: -.9, scale: 1.01, float: 18, floatX: 5, floatRotation: 1.2, breath: 1.015, duration: 5.4, delay: -1.7, scrollX: -18, scrollY: 22, scrollRotation: -.5 },
+  { offset: 24, rotation: 2.8, scale: .96, float: 20, floatX: 9, floatRotation: 2.3, breath: 1.012, duration: 7.9, delay: -5.8, scrollX: 30, scrollY: -28, scrollRotation: .85 },
+  { offset: 18, rotation: -2.2, scale: .95, float: 17, floatX: 7, floatRotation: 1.8, breath: 1.013, duration: 6.9, delay: -3.5, scrollX: -28, scrollY: 24, scrollRotation: -.7 },
+  { offset: -22, rotation: 1.4, scale: 1, float: 19, floatX: 6, floatRotation: 1.4, breath: 1.014, duration: 7.2, delay: -4.2, scrollX: 22, scrollY: -24, scrollRotation: .6 },
+  { offset: 10, rotation: -1.6, scale: .97, float: 16, floatX: 8, floatRotation: 1.7, breath: 1.011, duration: 6.6, delay: -2.9, scrollX: -20, scrollY: 20, scrollRotation: -.55 },
 ];
 
 const springValue = (value: MotionValue) => {
@@ -227,11 +229,16 @@ export default function CircularGallery({ items, language }: CircularGalleryProp
     const updateDepth = () => {
       depthFrameRef.current = 0;
       const bounds = container.getBoundingClientRect();
-      const center = bounds.left + bounds.width / 2;
+      const centerX = bounds.left + bounds.width / 2;
+      const centerY = bounds.top + bounds.height / 2;
       const shells = container.querySelectorAll<HTMLElement>(".floating-gallery__card-shell");
       shells.forEach((shell) => {
         const cardBounds = shell.getBoundingClientRect();
-        const distance = Math.min(1, Math.abs(cardBounds.left + cardBounds.width / 2 - center) / (bounds.width * 0.72));
+        const cardCenterX = cardBounds.left + cardBounds.width / 2;
+        const cardCenterY = cardBounds.top + cardBounds.height / 2;
+        const xDistance = (cardCenterX - centerX) / Math.max(1, bounds.width * .72);
+        const yDistance = (cardCenterY - centerY) / Math.max(1, bounds.height * .82);
+        const distance = Math.min(1, Math.hypot(xDistance, yDistance));
         const baseScale = Number(shell.dataset.baseScale ?? 1);
         const centerScale = 0.92 + (1 - distance) * 0.08;
         const scale = baseScale * 0.35 + centerScale * 0.65;

@@ -14,6 +14,20 @@ test("hero montage remains decorative rather than a second project index", async
   assert.doesNotMatch(gallery, /href=|onOpenProject|\/projects\//);
 });
 
+test("hero montage fits all seven previews in a responsive staggered grid", async () => {
+  const [gallery, galleryStyles, pageStyles] = await Promise.all([
+    read("src/components/CircularGallery.tsx"),
+    read("src/components/CircularGallery.css"),
+    read("src/styles.css"),
+  ]);
+  assert.equal((gallery.match(/\{ offset:/g) ?? []).length, 7);
+  assert.match(galleryStyles, /grid-template-columns:\s*repeat\(8, minmax\(0, 1fr\)\)/);
+  assert.match(galleryStyles, /\.floating-gallery__card-shell:nth-child\(7\)/);
+  assert.match(galleryStyles, /@media \(max-width: 520px\)[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.doesNotMatch(galleryStyles, /width:\s*max-content/);
+  assert.match(pageStyles, /@media \(max-width: 520px\)[\s\S]*\.poster-hero__gallery[^}]*height:\s*clamp\(38rem, 155vw, 46rem\)/);
+});
+
 test("the accordion is the only active homepage project implementation", async () => {
   const [app, section, evidence, editorial, stackStyles] = await Promise.all([
     read("src/App.tsx"),
