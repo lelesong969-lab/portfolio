@@ -6,6 +6,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import type { Language } from "../language";
 import "./CircularGallery.css";
 
 export type CircularGalleryItem = {
@@ -16,6 +17,7 @@ export type CircularGalleryItem = {
 
 type CircularGalleryProps = {
   items: CircularGalleryItem[];
+  language: Language;
 };
 
 type CardComposition = {
@@ -88,6 +90,7 @@ function GravityCard({
   neighborOffset,
   neighborScale,
   onActiveChange,
+  language,
 }: {
   item: CircularGalleryItem;
   index: number;
@@ -95,6 +98,7 @@ function GravityCard({
   neighborOffset: number;
   neighborScale: number;
   onActiveChange: (index: number | null) => void;
+  language: Language;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef(0);
@@ -188,14 +192,14 @@ function GravityCard({
           data-gravity-card
           tabIndex={0}
           role="img"
-          aria-label={`项目预览：${item.text}`}
+          aria-label={language === "en" ? `Project preview: ${item.text}` : `项目预览：${item.text}`}
           onPointerEnter={() => { setHoverTargets(true); onActiveChange(index); }}
           onPointerMove={handlePointerMove}
           onPointerLeave={() => { setHoverTargets(false); onActiveChange(null); }}
           onFocus={() => { setHoverTargets(true); onActiveChange(index); }}
           onBlur={() => { setHoverTargets(false); onActiveChange(null); }}
         >
-          <img src={item.image} alt="" decoding="async" draggable={false} />
+          <img src={item.image} alt="" draggable={false} />
           <span className="floating-gallery__project-quote" aria-hidden="true">
             <span className="floating-gallery__quote-mark floating-gallery__quote-mark--open">“</span>
             <span className="floating-gallery__quote-copy">{item.previewLabel}</span>
@@ -210,7 +214,7 @@ function GravityCard({
   );
 }
 
-export default function CircularGallery({ items }: CircularGalleryProps) {
+export default function CircularGallery({ items, language }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({ active: false, startX: 0, startScroll: 0 });
   const depthFrameRef = useRef(0);
@@ -254,15 +258,6 @@ export default function CircularGallery({ items }: CircularGalleryProps) {
       if (depthFrameRef.current === 0) depthFrameRef.current = window.requestAnimationFrame(updateDepth);
     };
 
-    let scrollFrameId = 0;
-    const requestScrollMotion = () => {
-      if (scrollFrameId) return;
-      scrollFrameId = window.requestAnimationFrame(() => {
-        scrollFrameId = 0;
-        updateScrollMotion();
-      });
-    };
-
     const centerGallery = () => {
       container.scrollLeft = Math.max(0, (container.scrollWidth - container.clientWidth) / 2);
       updateDepth();
@@ -272,19 +267,18 @@ export default function CircularGallery({ items }: CircularGalleryProps) {
     centerGallery();
     const initialFrame = window.requestAnimationFrame(centerGallery);
     const initialTimer = window.setTimeout(centerGallery, 120);
-    const resizeObserver = typeof ResizeObserver === "function" ? new ResizeObserver(requestDepth) : null;
-    resizeObserver?.observe(container);
+    const resizeObserver = new ResizeObserver(requestDepth);
+    resizeObserver.observe(container);
     container.addEventListener("scroll", requestDepth, { passive: true });
-    window.addEventListener("scroll", requestScrollMotion, { passive: true });
+    window.addEventListener("scroll", updateScrollMotion, { passive: true });
 
     return () => {
       window.cancelAnimationFrame(initialFrame);
       window.clearTimeout(initialTimer);
       window.cancelAnimationFrame(depthFrameRef.current);
-      window.cancelAnimationFrame(scrollFrameId);
-      resizeObserver?.disconnect();
+      resizeObserver.disconnect();
       container.removeEventListener("scroll", requestDepth);
-      window.removeEventListener("scroll", requestScrollMotion);
+      window.removeEventListener("scroll", updateScrollMotion);
     };
   }, [items]);
 
@@ -332,7 +326,7 @@ export default function CircularGallery({ items }: CircularGalleryProps) {
       ref={containerRef}
       tabIndex={0}
       role="region"
-      aria-label="项目画廊，可拖拽或使用左右方向键浏览"
+      aria-label={language === "en" ? "Project gallery. Drag or use the left and right arrow keys to browse." : "项目画廊，可拖拽或使用左右方向键浏览"}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={stopDragging}
@@ -352,6 +346,7 @@ export default function CircularGallery({ items }: CircularGalleryProps) {
               ? 1
               : Math.abs(index - hoveredIndex) === 1 ? .955 : .98}
             onActiveChange={setHoveredIndex}
+            language={language}
             key={item.text}
           />
         ))}

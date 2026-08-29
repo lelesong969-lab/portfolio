@@ -10,10 +10,12 @@ import {
 import { createPortal } from "react-dom";
 import { useGesture } from "@use-gesture/react";
 import type { GalleryImage, GalleryImageType } from "../../data/portfolio";
+import type { Language } from "../../language";
 import "./ProjectDomeGallery.css";
 
 type ProjectDomeGalleryProps = {
   images: GalleryImage[];
+  language: Language;
   fit?: number;
   fitBasis?: "auto" | "min" | "max" | "width" | "height";
   minRadius?: number;
@@ -92,6 +94,7 @@ function useSimpleGalleryMode() {
 
 export default function ProjectDomeGallery({
   images,
+  language,
   fit = 0.62,
   fitBasis = "auto",
   minRadius = 720,
@@ -337,7 +340,7 @@ export default function ProjectDomeGallery({
   const viewer = activeImage
     ? createPortal(
         <div className={`project-dome-viewer${viewerReady ? " is-open" : ""}`} role="dialog" aria-modal="true" aria-labelledby="project-dome-viewer-caption">
-          <button className="project-dome-viewer__backdrop" type="button" aria-label="关闭图片预览" onClick={closeViewer} />
+          <button className="project-dome-viewer__backdrop" type="button" aria-label={language === "en" ? "Close image preview" : "关闭图片预览"} onClick={closeViewer} />
           <div
             ref={viewerPanelRef}
             className={`project-dome-viewer__panel${activeImage.type === "poster" ? " is-poster" : ""}`}
@@ -349,7 +352,7 @@ export default function ProjectDomeGallery({
               "--viewer-image-background": activeImage.background ?? "#EEE8DE",
             } as CSSProperties}
           >
-            <button ref={closeButtonRef} className="project-dome-viewer__close" type="button" onClick={closeViewer} aria-label="关闭图片预览">CLOSE ×</button>
+            <button ref={closeButtonRef} className="project-dome-viewer__close" type="button" onClick={closeViewer} aria-label={language === "en" ? "Close image preview" : "关闭图片预览"}>CLOSE ×</button>
             <figure>
               <div className="project-dome-viewer__image-wrap">
                 <img
@@ -379,10 +382,10 @@ export default function ProjectDomeGallery({
   if (simpleMode) {
     return (
       <div ref={rootRef} className="project-dome-gallery project-dome-gallery--simple" style={rootStyle}>
-        <div className="project-dome-gallery__simple-list" aria-label="项目视觉证据画廊">
+        <div className="project-dome-gallery__simple-list" aria-label={language === "en" ? "Project visual-evidence gallery" : "项目视觉证据画廊"}>
           {normalizedImages.map((image, index) => (
             <figure className={`project-dome-gallery__simple-card is-${image.type}`} key={image.id}>
-              <button type="button" onClick={(event) => openViewer(index, event.currentTarget)} aria-label={`放大查看：${image.alt}`}>
+              <button type="button" onClick={(event) => openViewer(index, event.currentTarget)} aria-label={language === "en" ? `Enlarge: ${image.alt}` : `放大查看：${image.alt}`}>
                 <img
                   src={image.thumbnailSrc ?? image.src}
                   alt={image.alt}
@@ -407,7 +410,7 @@ export default function ProjectDomeGallery({
       <div ref={mainRef} className="project-dome-gallery__main">
         <div className="project-dome-gallery__stage">
           <div ref={sphereRef} className="project-dome-gallery__sphere">
-            {domeItems.map((item) => {
+            {domeItems.map((item, itemIndex) => {
               const index = normalizedImages.findIndex((image) => image.id === item.id);
               return (
                 <div
@@ -421,19 +424,27 @@ export default function ProjectDomeGallery({
                     "--gallery-image-background": item.background ?? "#EEE8DE",
                   } as CSSProperties}
                 >
-                  <button className="project-dome-gallery__tile" type="button" onClick={(event) => openViewer(index, event.currentTarget)} aria-label={`放大查看：${item.alt}`}>
-                    <img
-                      src={item.thumbnailSrc ?? item.src}
-                      alt={item.alt}
-                      width={item.width}
-                      height={item.height}
-                      loading="lazy"
-                      decoding="async"
-                      draggable={false}
-                      style={{ "--gallery-image-fit": item.fit } as CSSProperties}
-                    />
-                    <span className="project-dome-gallery__tile-meta"><b>{item.type.replace("-", " ")}</b><em>{String(index + 1).padStart(2, "0")}</em></span>
-                  </button>
+                  <div
+                    className="project-dome-gallery__float"
+                    style={{
+                      "--float-delay": `${-(itemIndex * 1.37).toFixed(2)}s`,
+                      "--float-duration": `${(8.4 + (itemIndex % 4) * 0.78).toFixed(2)}s`,
+                    } as CSSProperties}
+                  >
+                    <button className="project-dome-gallery__tile" type="button" onClick={(event) => openViewer(index, event.currentTarget)} aria-label={language === "en" ? `Enlarge: ${item.alt}` : `放大查看：${item.alt}`}>
+                      <img
+                        src={item.thumbnailSrc ?? item.src}
+                        alt={item.alt}
+                        width={item.width}
+                        height={item.height}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        style={{ "--gallery-image-fit": item.fit } as CSSProperties}
+                      />
+                      <span className="project-dome-gallery__tile-meta"><b>{item.type.replace("-", " ")}</b><em>{String(index + 1).padStart(2, "0")}</em></span>
+                    </button>
+                  </div>
                 </div>
               );
             })}

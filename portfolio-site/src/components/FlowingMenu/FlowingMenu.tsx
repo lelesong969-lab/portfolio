@@ -7,12 +7,14 @@ import {
 } from "react";
 import { gsap } from "gsap";
 import type { Project } from "../../data/portfolio";
+import type { Language } from "../../language";
 import { projectRouteClass, projectTheme } from "../../data/projectTheme";
 import "./FlowingMenu.css";
 
 type FlowingMenuProps = {
   projects: Project[];
   onOpenProject: (project: Project) => void;
+  language: Language;
 };
 
 type RouteTransition = {
@@ -35,6 +37,7 @@ function FlowingMenuRow({
   onActivate,
   onDeactivate,
   onNavigate,
+  language,
 }: {
   project: Project;
   active: boolean;
@@ -43,6 +46,7 @@ function FlowingMenuRow({
   onActivate: () => void;
   onDeactivate: () => void;
   onNavigate: (project: Project, row: HTMLAnchorElement) => void;
+  language: Language;
 }) {
   const itemRef = useRef<HTMLLIElement>(null);
   const linkRef = useRef<HTMLAnchorElement>(null);
@@ -262,16 +266,16 @@ function FlowingMenuRow({
           event.preventDefault();
           if (!frozen) onNavigate(project, event.currentTarget);
         }}
-        aria-label={`查看${project.titleZh}完整项目`}
+        aria-label={language === "en" ? `View the complete ${project.titleEn} project` : `查看${project.titleZh}完整项目`}
       >
         <span className="flowing-menu__default">
           <span className="flowing-menu__number">{project.index}</span>
           <span className="flowing-menu__titles">
-            <strong>{project.titleZh}</strong>
-            <span>{project.titleEn}</span>
+            <strong>{language === "en" ? project.titleEn : project.titleZh}</strong>
+            <span>{language === "en" ? project.titleZh : project.titleEn}</span>
           </span>
           <span className="flowing-menu__mobile-image" aria-hidden="true">
-            <img src={project.coverImage} alt="" loading="lazy" decoding="async" />
+            <img src={project.coverImage} alt="" loading="lazy" />
           </span>
         </span>
       </a>
@@ -281,11 +285,11 @@ function FlowingMenuRow({
           <div ref={marqueeTrackRef} className="flowing-menu__marquee-track">
             {segmentKeys.map((key) => (
               <div className="flowing-menu__segment" key={key}>
-                <span className="flowing-menu__marquee-copy">{project.marqueeText}</span>
+                <span className="flowing-menu__marquee-copy">{language === "en" ? project.marqueeText : project.titleZh}</span>
                 <span className="flowing-menu__marquee-image">
                   <img src={project.coverImage} alt="" loading="lazy" decoding="async" draggable={false} />
                 </span>
-                <span className="flowing-menu__marquee-label">{project.marqueeLabel}</span>
+                <span className="flowing-menu__marquee-label">{language === "en" ? project.marqueeLabel : "查看项目"}</span>
               </div>
             ))}
           </div>
@@ -295,7 +299,7 @@ function FlowingMenuRow({
   );
 }
 
-export default function FlowingMenu({ projects, onOpenProject }: FlowingMenuProps) {
+export default function FlowingMenu({ projects, onOpenProject, language }: FlowingMenuProps) {
   const transitionRef = useRef<HTMLDivElement>(null);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [routeTransition, setRouteTransition] = useState<RouteTransition | null>(null);
@@ -363,6 +367,7 @@ export default function FlowingMenu({ projects, onOpenProject }: FlowingMenuProp
             onActivate={() => setActiveSlug(project.slug)}
             onDeactivate={() => setActiveSlug((current) => current === project.slug ? null : current)}
             onNavigate={navigate}
+            language={language}
             key={project.slug}
           />
         ))}
@@ -370,8 +375,8 @@ export default function FlowingMenu({ projects, onOpenProject }: FlowingMenuProp
 
       {routeTransition && (
         <div ref={transitionRef} className="flowing-menu__route-transition" aria-hidden="true">
-          <p className="flowing-menu__route-index">{routeTransition.project.index} / 05</p>
-          <h2 className="flowing-menu__route-title">{routeTransition.project.titleEn}</h2>
+          <p className="flowing-menu__route-index">{routeTransition.project.index} / {String(projects.length).padStart(2, "0")}</p>
+          <h2 className="flowing-menu__route-title">{language === "en" ? routeTransition.project.titleEn : routeTransition.project.titleZh}</h2>
           <div className="flowing-menu__route-image">
             <img src={routeTransition.project.coverImage} alt="" />
           </div>

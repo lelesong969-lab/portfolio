@@ -1,5 +1,6 @@
 import { useId, useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
+import type { Language } from "../language";
 import BreathingWave from "./BreathingWave";
 import TextPressure from "./TextPressure";
 import {
@@ -53,8 +54,10 @@ function cubicBezierEase(progress: number) {
 
 function StarRevealTransition({
   closingPortal,
+  language,
 }: {
   closingPortal: HTMLElement | null;
+  language: Language;
 }) {
   const portalRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -155,7 +158,6 @@ function StarRevealTransition({
     let disposed = false;
     let initialized = false;
     let activePhase: "opening" | "idle" | "closing" = "opening";
-    let isMotionActive = false;
 
     const measureClosingCoverScale = () => {
       const baseWidth = Math.max(1, shape.clientWidth);
@@ -313,8 +315,7 @@ function StarRevealTransition({
     };
 
     const renderFrame = (time: number) => {
-      frameId = 0;
-      if (disposed || !isMotionActive) return;
+      if (disposed) return;
       const deltaSeconds = Math.min(.032, Math.max(.001, (time - lastTime) / 1000));
       lastTime = time;
       const previousRawProgress = rawProgress;
@@ -391,17 +392,6 @@ function StarRevealTransition({
       frameId = window.requestAnimationFrame(renderFrame);
     };
 
-    const startRender = () => {
-      if (disposed || !isMotionActive || frameId) return;
-      lastTime = performance.now();
-      frameId = window.requestAnimationFrame(renderFrame);
-    };
-    const stopRender = () => {
-      if (!frameId) return;
-      window.cancelAnimationFrame(frameId);
-      frameId = 0;
-    };
-
     hostStar(stage);
     resetEntrance();
     resetCharacters(helloCharacters);
@@ -424,29 +414,14 @@ function StarRevealTransition({
     const resizeObserver = new ResizeObserver(refreshLayout);
     resizeObserver.observe(stage);
     resizeObserver.observe(closingStage);
-    const visibility = new Map<Element, boolean>([
-      [portal, false],
-      [closingPortal, false],
-    ]);
-    const intersectionObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => visibility.set(entry.target, entry.isIntersecting));
-        isMotionActive = Array.from(visibility.values()).some(Boolean);
-        if (isMotionActive) startRender();
-        else stopRender();
-      },
-      { rootMargin: "100% 0px" },
-    );
-    intersectionObserver.observe(portal);
-    intersectionObserver.observe(closingPortal);
     window.addEventListener("wheel", noteWheelInput, { passive: true });
     window.addEventListener("resize", refreshLayout, { passive: true });
     window.addEventListener("orientationchange", refreshLayout);
+    frameId = window.requestAnimationFrame(renderFrame);
 
     return () => {
       disposed = true;
-      stopRender();
-      intersectionObserver.disconnect();
+      window.cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
       window.removeEventListener("wheel", noteWheelInput);
       window.removeEventListener("resize", refreshLayout);
@@ -461,10 +436,12 @@ function StarRevealTransition({
       starTransform.removeAttribute("transform");
       gsap.killTweensOf(thanks ? [bridgeMain, thanks, ...helloCharacters, ...thanksCharacters] : [bridgeMain, ...helloCharacters]);
     };
-  }, [closingPortal]);
+  }, [closingPortal, language]);
+
+  const welcomeWord = "WELCOME";
 
   return (
-    <section className="star-portal" ref={portalRef} aria-label="首页与关于我之间的星形过渡">
+    <section className="star-portal" ref={portalRef} aria-label={language === "en" ? "Star transition from the welcome to the about section" : "首页与关于我之间的星形过渡"}>
       <BreathingWave className="star-portal__boundary-wave" />
       <div className="star-portal__stage" ref={stageRef}>
         <svg
@@ -488,8 +465,8 @@ function StarRevealTransition({
           </g>
         </svg>
         <div className="hero-welcome section-shell" ref={welcomeRef} aria-labelledby="hero-welcome-title">
-          <h2 id="hero-welcome-title" className="hero-welcome__wordmark" aria-label="WELCOME">
-            {"WELCOME".split("").map((character, index) => (
+          <h2 id="hero-welcome-title" className="hero-welcome__wordmark" aria-label={welcomeWord}>
+            {welcomeWord.split("").map((character, index) => (
               <span className="hero-welcome__wordmark-char" aria-hidden="true" key={`${character}-${index}`}>
                 {character}
               </span>
@@ -497,7 +474,9 @@ function StarRevealTransition({
           </h2>
           <div className="hero-welcome__copy">
             <p className="hero-welcome__eyebrow">A SMALL INTRODUCTION</p>
-            <p>欢迎来到我的作品集。这里记录我如何整理研究与项目资料，把线索变成清晰的产品和业务判断。</p>
+            <p>{language === "en"
+              ? "Welcome to my portfolio. It shows how I synthesize research and project evidence, then turn signals into grounded product and business decisions."
+              : "欢迎来到我的作品集。这里记录我如何整理研究与项目资料，把线索转化为清晰、可靠的产品与业务判断。"}</p>
           </div>
         </div>
         <div id={titleId} className="intro-bridge__statement intro-bridge__statement--portal" ref={bridgeMainRef}>

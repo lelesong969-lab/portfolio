@@ -2,15 +2,19 @@ import { useLayoutEffect, useRef, type CSSProperties, type MouseEvent } from "re
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Project } from "../data/portfolio";
+import type { Language } from "../language";
 import { projectRouteClass, projectTheme } from "../data/projectTheme";
+import ProjectCaseNavigator from "./ProjectCaseNavigator";
 import ProjectDomeGallery from "./ProjectDomeGallery/ProjectDomeGallery";
 import "./ProjectCaseStudy.css";
 
 type ProjectCaseStudyProps = {
   project: Project;
-  nextProject?: Project;
+  nextProject: Project;
+  projects: Project[];
   onClose: () => void;
   onOpenProject: (project: Project) => void;
+  language: Language;
 };
 
 const accentByTone = {
@@ -30,8 +34,24 @@ function handleBack(event: MouseEvent<HTMLAnchorElement>, onClose: () => void) {
   onClose();
 }
 
-export default function ProjectCaseStudy({ project, nextProject, onClose, onOpenProject }: ProjectCaseStudyProps) {
+export default function ProjectCaseStudy({ project, nextProject, projects, onClose, onOpenProject, language }: ProjectCaseStudyProps) {
+  const projectTotal = String(projects.length).padStart(2, "0");
   const pageRef = useRef<HTMLElement>(null);
+  const content = language === "en" ? project.detailEn : project;
+  const galleryCopyById = new Map(project.detailEn.galleryCopy.map((item) => [item.id, item]));
+  const gallery = language === "en"
+    ? project.gallery.map((image) => {
+        const translated = galleryCopyById.get(image.id);
+        return translated ? { ...image, alt: translated.alt, caption: translated.caption } : image;
+      })
+    : project.gallery;
+  const completePoster = gallery.find((image) => image.id.endsWith("-full-poster"));
+  const externalMetrics = language === "en"
+    ? project.externalMetrics.map((metric, index) => ({
+        ...metric,
+        businessMeaning: project.detailEn.externalBusinessMeanings[index] ?? metric.businessMeaning,
+      }))
+    : project.externalMetrics;
   const projectStyle = {
     "--detail-accent": accentByTone[project.heroTone],
     "--project-entry": projectTheme.entryBackground,
@@ -77,7 +97,7 @@ export default function ProjectCaseStudy({ project, nextProject, onClose, onOpen
         scrollTrigger: { trigger: ".project-case-study__gallery-chapter", start: "top 76%", once: true },
       })
         .fromTo(".project-case-study__gallery-heading > *", { y: 45, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .68, stagger: .09 })
-        .fromTo(".project-case-study__dome-wrap", { y: 64, scale: .97, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: .92, ease: "expo.out" }, .2);
+        .fromTo(".project-case-study__gallery-display", { y: 64, scale: .97, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: .92, ease: "expo.out" }, .2);
 
       gsap.timeline({
         defaults: { ease: "power4.out" },
@@ -85,8 +105,7 @@ export default function ProjectCaseStudy({ project, nextProject, onClose, onOpen
       })
         .fromTo(".project-case-study__outcome-copy > *", { y: 38, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .62, stagger: .07 })
         .fromTo(".project-case-study__final-visual", { y: 64, clipPath: "inset(0 0 100% 0)", autoAlpha: 0 }, { y: 0, clipPath: "inset(0 0 0% 0)", autoAlpha: 1, duration: 1, ease: "expo.inOut" }, .16)
-        .fromTo(".project-case-study__final-visual img", { scale: 1.1 }, { scale: 1, duration: 1.15, ease: "power3.out" }, .22)
-        .fromTo(".project-case-study__next", { y: 48, autoAlpha: 0, clipPath: "inset(100% 0 0 0)" }, { y: 0, autoAlpha: 1, clipPath: "inset(0 0 0 0)", duration: .8 }, .6);
+        .fromTo(".project-case-study__final-visual img", { scale: 1.1 }, { scale: 1, duration: 1.15, ease: "power3.out" }, .22);
     }, page);
 
     const refreshFrame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
@@ -98,14 +117,6 @@ export default function ProjectCaseStudy({ project, nextProject, onClose, onOpen
       document.body.classList.remove(projectRouteClass);
     };
   }, [onClose, project.slug]);
-
-  const openNext = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!nextProject || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    document.documentElement.style.backgroundColor = projectTheme.entryBackground;
-    document.body.style.backgroundColor = projectTheme.entryBackground;
-    onOpenProject(nextProject);
-  };
 
   return (
     <main
@@ -122,23 +133,23 @@ export default function ProjectCaseStudy({ project, nextProject, onClose, onOpen
         <div className="project-case-study__shell">
           <div className="project-case-study__hero-grid">
             <div className="project-case-study__title-block">
-              <p className="project-case-study__eyebrow">{project.index} / 05 · {project.categoryEn}</p>
-              <h1 id="project-case-title">{project.titleZh}</h1>
-              <p className="project-case-study__english">{project.titleEn}</p>
-              <p className="project-case-study__summary">{project.description}</p>
+              <p className="project-case-study__eyebrow">{project.index} / {projectTotal} · {project.categoryEn}</p>
+              <h1 id="project-case-title">{language === "en" ? project.titleEn : project.titleZh}</h1>
+              <p className="project-case-study__english">{language === "en" ? project.categoryEn : project.titleEn}</p>
+              <p className="project-case-study__summary">{content.description}</p>
               <dl className="project-case-study__meta">
                 <div><dt>ROLE</dt><dd>{project.role}</dd></div>
                 <div><dt>PERIOD</dt><dd>{project.year}</dd></div>
-                <div><dt>FOCUS</dt><dd>{project.categoryDetail}</dd></div>
+                <div><dt>FOCUS</dt><dd>{content.categoryDetail}</dd></div>
               </dl>
             </div>
 
             <figure className="project-case-study__hero-visual">
-              <img src={project.coverImage} alt={project.alt} fetchPriority="high" width="1600" height="1100" />
+              <img src={project.coverImage} alt={content.alt} fetchPriority="high" width="1600" height="1100" />
             </figure>
           </div>
 
-          <div className={`project-case-study__project-metrics project-case-study__project-metrics--${project.metrics.length}`} aria-label="项目已完成成果">
+          <div className={`project-case-study__project-metrics project-case-study__project-metrics--${project.metrics.length}`} aria-label={language === "en" ? "Documented project outputs" : "项目已完成成果"}>
             {project.metrics.map((metric) => (
               <article key={metric.label}>
                 <strong>{metric.value}</strong>
@@ -149,11 +160,14 @@ export default function ProjectCaseStudy({ project, nextProject, onClose, onOpen
 
           <div className="project-case-study__context-intro">
             <p className="project-case-study__eyebrow">EXTERNAL CONTEXT → BUSINESS MEANING</p>
-            <h2>{project.thesis}</h2>
+            <div className="project-case-study__context-copy">
+              <h2>{content.thesis}</h2>
+              <p>{content.context}</p>
+            </div>
           </div>
 
           <div className="project-case-study__external-grid">
-            {project.externalMetrics.map((metric) => (
+            {externalMetrics.map((metric) => (
               <a className="project-case-study__external-card" href={metric.sourceUrl} target="_blank" rel="noreferrer" key={`${metric.value}-${metric.label}`}>
                 <header><strong>{metric.value}</strong><span>{metric.year}</span></header>
                 <h3>{metric.label}</h3>
@@ -166,16 +180,16 @@ export default function ProjectCaseStudy({ project, nextProject, onClose, onOpen
           <div className="project-case-study__analysis-grid">
             <article className="project-case-study__analysis-panel">
               <p className="project-case-study__eyebrow">SIGNAL → ANALYSIS → INSIGHT</p>
-              <h2>{project.analysisConclusion}</h2>
+              <h2>{content.analysisConclusion}</h2>
               <ol>
-                {project.methods.map((method, index) => <li key={method}><span>0{index + 1}</span>{method}</li>)}
+                {content.methods.map((method, index) => <li key={method}><span>0{index + 1}</span>{method}</li>)}
               </ol>
             </article>
 
             <article className="project-case-study__analysis-panel project-case-study__analysis-panel--map">
               <p className="project-case-study__eyebrow">{project.stakeholderValues ? "STAKEHOLDER VALUE" : "PRIORITIZED INSIGHTS"}</p>
               <div className="project-case-study__value-map">
-                {(project.stakeholderValues ?? project.findings.map((finding, index) => ({ stakeholder: `INSIGHT 0${index + 1}`, value: finding }))).map((item) => (
+                {(project.stakeholderValues ?? content.findings.map((finding, index) => ({ stakeholder: `INSIGHT 0${index + 1}`, value: finding }))).map((item) => (
                   <div key={item.stakeholder}><strong>{item.stakeholder}</strong><p>{item.value}</p></div>
                 ))}
               </div>
@@ -186,33 +200,52 @@ export default function ProjectCaseStudy({ project, nextProject, onClose, onOpen
 
       <div className="project-theme-bridge" aria-hidden="true" />
 
-      <section className="project-case-study__chapter project-case-study__gallery-chapter" aria-labelledby="visual-evidence-title">
-        <div className="project-case-study__shell project-case-study__gallery-heading">
-          <p className="project-case-study__eyebrow">02 / INTERACTIVE VISUAL EVIDENCE</p>
-          <h2 id="visual-evidence-title">完整图表、过程与设计证据，在空间中展开。</h2>
-          <p>拖动探索，点击查看原图。图表、海报、界面和技术图均保持完整比例。</p>
+      <section className={`project-case-study__chapter project-case-study__gallery-chapter${completePoster ? " project-case-study__gallery-chapter--poster" : ""}`} aria-labelledby="visual-evidence-title">
+        <div className="project-case-study__shell project-case-study__gallery-heading project-case-study__gallery-heading--poster">
+          <p className="project-case-study__eyebrow">{completePoster ? "02 / COMPLETE PROJECT POSTER" : "02 / INTERACTIVE VISUAL EVIDENCE"}</p>
+          <h2 id="visual-evidence-title">{completePoster
+            ? language === "en"
+              ? <><span>Read the complete project story</span>{" "}<span>in its original poster composition.</span></>
+              : <><span>以完整海报版式查看项目叙事</span><span>与全部设计证据。</span></>
+            : language === "en"
+              ? <><span>Explore the complete charts, process</span>{" "}<span>documentation, and design evidence.</span></>
+              : <><span>完整图表、过程记录与设计证据</span><span>在空间画廊中展开。</span></>}</h2>
         </div>
-        <div className="project-case-study__dome-wrap">
-          <ProjectDomeGallery
-            images={project.gallery}
-            fit={0.62}
-            fitBasis="auto"
-            minRadius={720}
-            maxRadius={1500}
-            padFactor={0.08}
-            overlayBlurColor={projectTheme.galleryBackground}
-            maxVerticalRotationDeg={6}
-            dragSensitivity={28}
-            enlargeTransitionMs={480}
-            segments={32}
-            dragDampening={0.72}
-            openedImageWidth="min(88vw, 1360px)"
-            openedImageHeight="min(82vh, 900px)"
-            imageBorderRadius="14px"
-            openedImageBorderRadius="18px"
-            grayscale={false}
-          />
-        </div>
+        {completePoster ? (
+          <figure className="project-case-study__full-poster project-case-study__gallery-display">
+            <img
+              src={completePoster.src}
+              alt={completePoster.alt}
+              width={completePoster.width}
+              height={completePoster.height}
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        ) : (
+          <div className="project-case-study__dome-wrap project-case-study__gallery-display">
+            <ProjectDomeGallery
+              images={gallery}
+              language={language}
+              fit={0.58}
+              fitBasis="auto"
+              minRadius={640}
+              maxRadius={1320}
+              padFactor={0.06}
+              overlayBlurColor={projectTheme.galleryBackground}
+              maxVerticalRotationDeg={6}
+              dragSensitivity={28}
+              enlargeTransitionMs={480}
+              segments={32}
+              dragDampening={0.72}
+              openedImageWidth="min(88vw, 1360px)"
+              openedImageHeight="min(82vh, 900px)"
+              imageBorderRadius="14px"
+              openedImageBorderRadius="18px"
+              grayscale={false}
+            />
+          </div>
+        )}
       </section>
 
       <section className="project-case-study__chapter project-case-study__outcome">
@@ -220,13 +253,13 @@ export default function ProjectCaseStudy({ project, nextProject, onClose, onOpen
         <div className="project-case-study__shell project-case-study__outcome-grid">
           <div className="project-case-study__outcome-copy">
             <p className="project-case-study__eyebrow">03 / FINAL SOLUTION & DELIVERABLES</p>
-            <h2>{project.finalTitle}</h2>
-            <p>{project.finalSummary}</p>
+            <h2>{content.finalTitle}</h2>
+            <p>{content.finalSummary}</p>
             <ul className="project-case-study__decision-list">
-              {project.decisions.map((decision, index) => <li key={decision}><span>0{index + 1}</span>{decision}</li>)}
+              {content.decisions.map((decision, index) => <li key={decision}><span>0{index + 1}</span>{decision}</li>)}
             </ul>
             {project.outcomeMetrics && (
-              <div className="project-case-study__outcome-metrics" aria-label="项目最终量化成果">
+              <div className="project-case-study__outcome-metrics" aria-label={language === "en" ? "Final quantified project outcomes" : "项目最终量化成果"}>
                 {project.outcomeMetrics.map((metric) => <p key={metric.label}><strong>{metric.value}</strong><span>{metric.label}</span></p>)}
               </div>
             )}
@@ -237,24 +270,19 @@ export default function ProjectCaseStudy({ project, nextProject, onClose, onOpen
           </div>
 
           <figure className="project-case-study__final-visual">
-            <img src={project.finalImage} alt={project.finalAlt} loading="lazy" width="1600" height="1100" />
-            <figcaption>{project.finalAlt}</figcaption>
+            <img src={project.finalImage} alt={content.finalAlt} loading="lazy" width="1600" height="1100" />
+            <figcaption>{content.finalAlt}</figcaption>
           </figure>
         </div>
 
-        {nextProject ? (
-          <a className="project-case-study__next" href={nextProject.href} onClick={openNext}>
-            <span>NEXT PROJECT · {nextProject.index} / 05</span>
-            <strong>{nextProject.titleZh}</strong>
-            <em>{nextProject.titleEn} →</em>
-          </a>
-        ) : (
-          <a className="project-case-study__next" href="/#work" onClick={(event) => handleBack(event, onClose)}>
-            <span>ALL PROJECTS</span>
-            <strong>返回项目列表</strong>
-            <em>Back to My Projects →</em>
-          </a>
-        )}
+        <ProjectCaseNavigator
+          key={project.slug}
+          projects={projects}
+          currentProject={project}
+          nextProject={nextProject}
+          language={language}
+          onOpenProject={onOpenProject}
+        />
       </section>
     </main>
   );

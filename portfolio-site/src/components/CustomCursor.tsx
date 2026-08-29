@@ -141,12 +141,6 @@ export default function CustomCursor() {
     let pointerSpeed = 0;
     let idleMix = 0;
 
-    const startRender = () => {
-      if (!initialized || frameId || document.hidden) return;
-      lastFrame = performance.now();
-      frameId = window.requestAnimationFrame(render);
-    };
-
     const syncContrast = () => {
       root.dataset.contrast = shouldUseLightStars(cursor.x, cursor.y) ? "dark" : "light";
     };
@@ -184,7 +178,6 @@ export default function CustomCursor() {
         secondarySpring.x = cursor.x - trailDirection.x * 38;
         secondarySpring.y = cursor.y - trailDirection.y * 38;
         root.dataset.visible = "true";
-        startRender();
       }
 
       const target = event.target;
@@ -232,28 +225,18 @@ export default function CustomCursor() {
       frameId = window.requestAnimationFrame(render);
     };
 
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if (frameId) window.cancelAnimationFrame(frameId);
-        frameId = 0;
-      } else {
-        startRender();
-      }
-    };
-
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerdown", handlePointerDown, { passive: true });
     window.addEventListener("pointerup", handlePointerUp, { passive: true });
     window.addEventListener("pointercancel", handlePointerUp, { passive: true });
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    frameId = window.requestAnimationFrame(render);
 
     return () => {
-      if (frameId) window.cancelAnimationFrame(frameId);
+      window.cancelAnimationFrame(frameId);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerdown", handlePointerDown);
       window.removeEventListener("pointerup", handlePointerUp);
       window.removeEventListener("pointercancel", handlePointerUp);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
